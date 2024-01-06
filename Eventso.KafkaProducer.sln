@@ -1,0 +1,57 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34031.279
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventso.KafkaProducer", "src\Eventso.KafkaProducer\Eventso.KafkaProducer.csproj", "{ED655E3A-8249-4F4F-9B86-9820139AACBE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{90C913CD-982D-4F0E-9FD0-F98B69C4427D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8528A4BC-7B90-483E-AEA9-E47FA590277A}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+		Directory.Packages.props = Directory.Packages.props
+		docker-compose.yml = docker-compose.yml
+		.github\workflows\dotnet-core.yml = .github\workflows\dotnet-core.yml
+		.github\workflows\nuget-internal-publish.yml = .github\workflows\nuget-internal-publish.yml
+		.github\workflows\nuget-publish.yml = .github\workflows\nuget-publish.yml
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{F1DFF1A0-B140-41D5-9277-30DD827CF33C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eventso.KafkaProducer.Benchmark", "tests\Eventso.KafkaProducer.Benchmark\Eventso.KafkaProducer.Benchmark.csproj", "{CB786C13-EEB4-4DED-A572-67FD5AD31447}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eventso.KafkaProducer.IntegrationTests", "tests\Eventso.KafkaProducer.IntegrationTests\Eventso.KafkaProducer.IntegrationTests.csproj", "{A58F5136-64DF-47A0-B2BC-7F34BED6553C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{ED655E3A-8249-4F4F-9B86-9820139AACBE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED655E3A-8249-4F4F-9B86-9820139AACBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED655E3A-8249-4F4F-9B86-9820139AACBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED655E3A-8249-4F4F-9B86-9820139AACBE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CB786C13-EEB4-4DED-A572-67FD5AD31447}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CB786C13-EEB4-4DED-A572-67FD5AD31447}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CB786C13-EEB4-4DED-A572-67FD5AD31447}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CB786C13-EEB4-4DED-A572-67FD5AD31447}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A58F5136-64DF-47A0-B2BC-7F34BED6553C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A58F5136-64DF-47A0-B2BC-7F34BED6553C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A58F5136-64DF-47A0-B2BC-7F34BED6553C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A58F5136-64DF-47A0-B2BC-7F34BED6553C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{ED655E3A-8249-4F4F-9B86-9820139AACBE} = {F1DFF1A0-B140-41D5-9277-30DD827CF33C}
+		{CB786C13-EEB4-4DED-A572-67FD5AD31447} = {90C913CD-982D-4F0E-9FD0-F98B69C4427D}
+		{A58F5136-64DF-47A0-B2BC-7F34BED6553C} = {90C913CD-982D-4F0E-9FD0-F98B69C4427D}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4282985D-AB9F-4998-8C04-CB90F03E9DCD}
+	EndGlobalSection
+EndGlobal
