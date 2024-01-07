@@ -48,9 +48,9 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
                     var r1 = await producer1.ProduceAsync(topic.Name, key1, value);
                     Assert.Equal(0, r1.Offset);
 
-                    await producer1.ProduceAsync(new TopicPartition(topic.Name, 0), key2, value);
+                    await producer1.ProduceAsync(topic.Name, key2, value, partition: 0);
                     producer1.Produce(topic.Name, key3, value);
-                    producer1.Produce(new TopicPartition(topic.Name, 0), key4, value);
+                    producer1.Produce(topic.Name, key4, value, partition: 0);
                 }
 
                 var consumerConfig = new ConsumerConfig
@@ -99,9 +99,9 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
                     var r1 = await producer1.ProduceAsync(topic.Name, key1, value);
                     Assert.Equal(0, r1.Offset);
 
-                    await producer1.ProduceAsync(new TopicPartition(topic.Name, 0), key2, value);
+                    await producer1.ProduceAsync(topic.Name, key2, value, partition: 0);
                     producer1.Produce(topic.Name, key3, value);
-                    producer1.Produce(new TopicPartition(topic.Name, 0), key4, value);
+                    producer1.Produce(topic.Name, key4, value, partition: 0);
                 }
 
                 var consumerConfig = new ConsumerConfig
@@ -148,9 +148,9 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
                     var r1 = await producer1.ProduceAsync(topic.Name, key1, value);
                     Assert.Equal(0, r1.Offset);
 
-                    await producer1.ProduceAsync(new TopicPartition(topic.Name, 0), key2, value);
+                    await producer1.ProduceAsync(topic.Name, key2, value, partition: 0);
                     producer1.Produce(topic.Name, key3, value);
-                    producer1.Produce(new TopicPartition(topic.Name, 0), key4, value);
+                    producer1.Produce(topic.Name, key4, value, partition: 0);
                 }
 
                 var consumerConfig = new ConsumerConfig
@@ -197,9 +197,9 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
                     var r1 = await producer1.ProduceAsync(topic.Name, key1, value);
                     Assert.Equal(0, r1.Offset);
 
-                    await producer1.ProduceAsync(new TopicPartition(topic.Name, 0), key2, value);
+                    await producer1.ProduceAsync(topic.Name, key2, value, partition: 0);
                     producer1.Produce(topic.Name, key3, value);
-                    producer1.Produce(new TopicPartition(topic.Name, 0), key4, value);
+                    producer1.Produce(topic.Name, key4, value, partition: 0);
                 }
 
                 var consumerConfig = new ConsumerConfig

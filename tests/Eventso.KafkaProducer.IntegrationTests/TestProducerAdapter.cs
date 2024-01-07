@@ -64,16 +64,16 @@ namespace Eventso.KafkaProducer.IntegrationTests
             Message<TKey, TValue> message,
             CancellationToken cancellationToken = default)
         {
-            message.Headers = message.Headers ?? new Headers();
+            message.Headers ??= new Headers();
 
             var result = await producer.ProduceAsync(
                 topic,
                 GetKeyBytes(message.Key, new SerializationContext(MessageComponentType.Key, topic, message.Headers)),
                 GetValueBytes(message.Value,
                     new SerializationContext(MessageComponentType.Value, topic, message.Headers)),
+                cancellationToken,
                 message.Headers,
-                message.Timestamp,
-                cancellationToken);
+                message.Timestamp);
 
             return new DeliveryResult<TKey, TValue>
             {
@@ -94,16 +94,17 @@ namespace Eventso.KafkaProducer.IntegrationTests
             Message<TKey, TValue> message,
             CancellationToken cancellationToken = default)
         {
-            message.Headers = message.Headers ?? new Headers();
+            message.Headers ??= new Headers();
             var result = await producer.ProduceAsync(
-                topicPartition,
+                topicPartition.Topic,
                 GetKeyBytes(message.Key,
                     new SerializationContext(MessageComponentType.Key, topicPartition.Topic, message.Headers)),
                 GetValueBytes(message.Value,
                     new SerializationContext(MessageComponentType.Value, topicPartition.Topic, message.Headers)),
+                cancellationToken,
                 message.Headers,
                 message.Timestamp,
-                cancellationToken);
+                topicPartition.Partition);
 
             return new DeliveryResult<TKey, TValue>
             {
@@ -124,7 +125,7 @@ namespace Eventso.KafkaProducer.IntegrationTests
             Message<TKey, TValue> message,
             Action<DeliveryReport<TKey, TValue>>? deliveryHandler = null)
         {
-            message.Headers = message.Headers ?? new Headers();
+            message.Headers ??= new Headers();
             producer.Produce(
                 topic,
                 GetKeyBytes(message.Key, new SerializationContext(MessageComponentType.Key, topic, message.Headers)),
@@ -153,10 +154,10 @@ namespace Eventso.KafkaProducer.IntegrationTests
             Message<TKey, TValue> message,
             Action<DeliveryReport<TKey, TValue>>? deliveryHandler = null)
         {
-            message.Headers = message.Headers ?? new Headers();
+            message.Headers ??= new Headers();
 
             producer.Produce(
-                topicPartition,
+                topicPartition.Topic,
                 GetKeyBytes(message.Key,
                     new SerializationContext(MessageComponentType.Key, topicPartition.Topic, message.Headers)),
                 GetValueBytes(message.Value,
@@ -176,7 +177,8 @@ namespace Eventso.KafkaProducer.IntegrationTests
                             Value = message.Value
                         }
                     })
-                    : default(Action<DeliveryReport>));
+                    : default(Action<DeliveryReport>),
+                topicPartition.Partition);
         }
 
 

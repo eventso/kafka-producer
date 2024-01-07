@@ -28,7 +28,7 @@ public interface IProducer : IClient
     ///     Kafka topic. The partition the message is
     ///     sent to is determined by the partitioner
     ///     defined using the 'partitioner' configuration
-    ///     property.
+    ///     property or partition parameter when specified.
     /// </summary>
     /// <param name="topic">
     ///     The topic to produce the message to.
@@ -39,9 +39,13 @@ public interface IProducer : IClient
     /// <param name="value">
     ///     The message value. 'ReadOnlySpan&lt;byte&gt;.Empty' can be used for null value.
     /// </param>
+    /// <param name="cancellationToken">
+    ///     A cancellation token to observe whilst waiting
+    ///     the returned task to complete.
+    /// </param>
     /// <param name="headers">
     ///     The collection of message headers (or null). Specifying null or an 
-    ///      empty list are equivalent. The order of headers is maintained, and
+    ///     empty list are equivalent. The order of headers is maintained, and
     ///     duplicate header keys are allowed.
     /// </param>
     /// <param name="timestamp">
@@ -49,10 +53,7 @@ public interface IProducer : IClient
     ///     Specify Timestamp.Default to set the message timestamp to the time
     ///     of this function call.
     /// </param>
-    /// <param name="cancellationToken">
-    ///     A cancellation token to observe whilst waiting
-    ///     the returned task to complete.
-    /// </param>
+    /// <param name="partition">The partition or null for using partitioner</param>
     /// <returns>
     ///     A Task which will complete with a delivery
     ///     report corresponding to the produce request,
@@ -72,68 +73,18 @@ public interface IProducer : IClient
         string topic,
         ReadOnlySpan<byte> key,
         ReadOnlySpan<byte> value,
+        CancellationToken cancellationToken = default(CancellationToken),
         Headers? headers = null,
         Timestamp timestamp = default,
-        CancellationToken cancellationToken = default(CancellationToken));
-
-
-    /// <summary>
-    ///     Asynchronously send a single message to a
-    ///     Kafka topic/partition.
-    /// </summary>
-    /// <param name="topicPartition">
-    ///     The topic partition to produce the
-    ///     message to.
-    /// </param>
-    /// <param name="key">
-    ///     The message key. 'ReadOnlySpan&lt;byte&gt;.Empty' can be used for null key.
-    /// </param>
-    /// <param name="value">
-    ///     The message value. 'ReadOnlySpan&lt;byte&gt;.Empty' can be used for null value.
-    /// </param>
-    /// <param name="headers">
-    ///     The collection of message headers (or null). Specifying null or an 
-    ///      empty list are equivalent. The order of headers is maintained, and
-    ///     duplicate header keys are allowed.
-    /// </param>
-    /// <param name="timestamp">
-    ///     The message timestamp. The timestamp type must be set to CreateTime. 
-    ///     Specify Timestamp.Default to set the message timestamp to the time
-    ///     of this function call.
-    /// </param>
-    /// <param name="cancellationToken">
-    ///     A cancellation token to observe whilst waiting
-    ///     the returned task to complete.
-    /// </param>
-    /// <returns>
-    ///     A Task which will complete with a delivery
-    ///     report corresponding to the produce request,
-    ///     or an exception if an error occurred.
-    /// </returns>
-    /// <exception cref="ProduceException">
-    ///     Thrown in response to any produce request
-    ///     that was unsuccessful for any reason
-    ///     (excluding user application logic errors).
-    ///     The Error property of the exception provides
-    ///     more detailed information.
-    /// </exception>
-    /// <exception cref="System.ArgumentException">
-    ///     Thrown in response to invalid argument values.
-    /// </exception>
-    Task<DeliveryResult> ProduceAsync(
-        TopicPartition topicPartition,
-        ReadOnlySpan<byte> key,
-        ReadOnlySpan<byte> value,
-        Headers? headers = null,
-        Timestamp timestamp = default,
-        CancellationToken cancellationToken = default(CancellationToken));
+        Partition? partition = null);
 
 
     /// <summary>
     ///     Asynchronously send a single message to a
     ///     Kafka topic. The partition the message is sent
     ///     to is determined by the partitioner defined
-    ///     using the 'partitioner' configuration property.
+    ///     using the 'partitioner' configuration property
+    ///     or partition parameter when specified.
     /// </summary>
     /// <param name="topic">
     ///     The topic to produce the message to.
@@ -159,6 +110,7 @@ public interface IProducer : IClient
     ///     with a delivery report corresponding to the
     ///     produce request (if enabled).
     /// </param>
+    /// <param name="partition">The partition or null for using partitioner</param>
     /// <exception cref="Confluent.Kafka.ProduceException">
     ///     Thrown in response to any error that is known
     ///     immediately (excluding user application logic
@@ -183,65 +135,10 @@ public interface IProducer : IClient
         ReadOnlySpan<byte> value,
         Headers? headers = null,
         Timestamp timestamp = default,
-        Action<DeliveryReport>? deliveryHandler = null);
+        Action<DeliveryReport>? deliveryHandler = null,
+        Partition? partition = null);
 
 
-    /// <summary>
-    ///     Asynchronously send a single message to a
-    ///     Kafka topic partition.
-    /// </summary>
-    /// <param name="topicPartition">
-    ///     The topic partition to produce
-    ///     the message to.
-    /// </param>
-    /// <param name="key">
-    ///     The message key. 'ReadOnlySpan&lt;byte&gt;.Empty' can be used for null key.
-    /// </param>
-    /// <param name="value">
-    ///     The message value. 'ReadOnlySpan&lt;byte&gt;.Empty' can be used for null value.
-    /// </param>
-    /// <param name="headers">
-    ///     The collection of message headers (or null). Specifying null or an 
-    ///      empty list are equivalent. The order of headers is maintained, and
-    ///     duplicate header keys are allowed.
-    /// </param>
-    /// <param name="timestamp">
-    ///     The message timestamp. The timestamp type must be set to CreateTime. 
-    ///     Specify Timestamp.Default to set the message timestamp to the time
-    ///     of this function call.
-    /// </param>
-    /// <param name="deliveryHandler">
-    ///     A delegate that will be called
-    ///     with a delivery report corresponding to the
-    ///     produce request (if enabled).
-    /// </param>
-    /// <exception cref="ProduceException">
-    ///     Thrown in response to any error that is known
-    ///     immediately (excluding user application logic errors),
-    ///     for example ErrorCode.Local_QueueFull. Asynchronous
-    ///     notification of unsuccessful produce requests is made
-    ///     available via the <paramref name="deliveryHandler" />
-    ///     parameter (if specified). The Error property of the
-    ///     exception / delivery report provides more detailed
-    ///     information.
-    /// </exception>
-    /// <exception cref="System.ArgumentException">
-    ///     Thrown in response to invalid argument values.
-    /// </exception>
-    /// <exception cref="System.InvalidOperationException">
-    ///     Thrown in response to error conditions that reflect
-    ///     an error in the application logic of the calling
-    ///     application.
-    /// </exception>
-    void Produce(
-        TopicPartition topicPartition,
-        ReadOnlySpan<byte> key,
-        ReadOnlySpan<byte> value,
-        Headers? headers = null,
-        Timestamp timestamp = default,
-        Action<DeliveryReport>? deliveryHandler = null);
-
-        
     /// <summary>
     ///     Poll for callback events.
     /// </summary>

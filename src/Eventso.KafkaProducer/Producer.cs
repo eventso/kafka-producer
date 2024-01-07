@@ -15,27 +15,28 @@ public sealed class Producer : IProducer
     }
 
     public Task<DeliveryResult> ProduceAsync(
-        TopicPartition topicPartition,
+        string topic,
         ReadOnlySpan<byte> key,
         ReadOnlySpan<byte> value,
+        CancellationToken cancellationToken = default(CancellationToken),
         Headers? headers = null,
         Timestamp timestamp = default,
-        CancellationToken cancellationToken = default)
+        Partition? partition = null)
     {
         try
         {
-            var handler = new TypedTaskDeliveryHandlerShim(topicPartition.Topic);
+            var handler = new TypedTaskDeliveryHandlerShim(topic);
 
             if (cancellationToken.CanBeCanceled)
                 handler.CancellationTokenRegistration = cancellationToken.Register(() => handler.TrySetCanceled());
 
             BinaryProducer.Produce(
                 producerImplementation.Handle.LibrdkafkaHandle,
-                topicPartition.Topic,
+                topic,
                 value,
                 key,
                 timestamp,
-                topicPartition.Partition,
+                partition ?? Partition.Any,
                 headers?.BackingList,
                 handler);
 
@@ -47,67 +48,34 @@ public sealed class Producer : IProducer
                 ex.Error,
                 new DeliveryResult
                 {
-                    TopicPartitionOffset = new TopicPartitionOffset(topicPartition, Offset.Unset)
+                    TopicPartitionOffset = new TopicPartitionOffset(new(topic, partition ?? Partition.Any), Offset.Unset)
                 });
         }
     }
 
     /// <inheritdoc/>
-    public Task<DeliveryResult> ProduceAsync(
-        string topic,
-        ReadOnlySpan<byte> key,
-        ReadOnlySpan<byte> value,
-        Headers? headers = null,
-        Timestamp timestamp = default,
-        CancellationToken cancellationToken = default)
-        => ProduceAsync(
-            new TopicPartition(topic, Partition.Any),
-            key,
-            value,
-            headers,
-            timestamp,
-            cancellationToken);
-
-    /// <inheritdoc/>
     public void Produce(
         string topic,
         ReadOnlySpan<byte> key,
         ReadOnlySpan<byte> value,
         Headers? headers = null,
         Timestamp timestamp = default,
-        Action<DeliveryReport>? deliveryHandler = null)
-        => Produce(
-            new TopicPartition(topic, Partition.Any),
-            key,
-            value,
-            headers,
-            timestamp,
-            deliveryHandler);
-
-
-    /// <inheritdoc/>
-    public void Produce(
-        TopicPartition topicPartition,
-        ReadOnlySpan<byte> key,
-        ReadOnlySpan<byte> value,
-        Headers? headers = null,
-        Timestamp timestamp = default,
-        Action<DeliveryReport>? deliveryHandler = null)
+        Action<DeliveryReport>? deliveryHandler = null,
+        Partition? partition = null)
     {
         try
         {
             BinaryProducer.Produce(
                 producerImplementation.Handle.LibrdkafkaHandle,
-                topicPartition.Topic,
+                topic,
                 value,
                 key,
-                timestamp, topicPartition.Partition,
+                timestamp,
+                partition ?? Partition.Any,
                 headers?.BackingList,
                 deliveryHandler == null
                     ? null
-                    : new TypedDeliveryHandlerShim_Action(
-                        topicPartition.Topic,
-                        deliveryHandler));
+                    : new TypedDeliveryHandlerShim_Action(topic, deliveryHandler));
         }
         catch (KafkaException ex)
         {
@@ -115,7 +83,7 @@ public sealed class Producer : IProducer
                 ex.Error,
                 new DeliveryReport
                 {
-                    TopicPartitionOffset = new TopicPartitionOffset(topicPartition, Offset.Unset)
+                    TopicPartitionOffset = new TopicPartitionOffset(new(topic, partition ?? Partition.Any), Offset.Unset)
                 });
         }
     }

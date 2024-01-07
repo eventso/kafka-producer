@@ -7,6 +7,7 @@ namespace Eventso.KafkaProducer;
 
 internal static class LibrdProducer
 {
+    private const int StackThreshold = 256;
     // ReSharper disable once UseArrayEmptyMethod
     private static readonly byte[] EmptyByteArray = new byte[0];
 
@@ -115,7 +116,7 @@ internal static class LibrdProducer
     private static ErrorCode MarshalHeader(IntPtr headersPtr, IHeader header)
     {
         var keyLength = Encoding.UTF8.GetByteCount(header.Key);
-        var keyBytes = keyLength <= 512 ? stackalloc byte[keyLength] : new byte[keyLength];
+        var keyBytes = keyLength <= StackThreshold ? stackalloc byte[keyLength] : new byte[keyLength];
 
         Encoding.UTF8.GetBytes(header.Key, keyBytes);
 
