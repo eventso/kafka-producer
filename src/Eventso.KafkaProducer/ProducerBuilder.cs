@@ -7,14 +7,30 @@ public sealed class ProducerBuilder
     private readonly ProducerBuilder<byte[], byte[]> _inner;
 
     /// <summary>
-    ///     A collection of librdkafka configuration parameters 
-    ///     (refer to https://github.com/edenhill/librdkafka/blob/master/CONFIGURATION.md)
+    ///     A collection of librdkafka configuration parameters
     ///     and parameters specific to this client (refer to: 
     ///     <see cref="Confluent.Kafka.ConfigPropertyNames" />).
     ///     At a minimum, 'bootstrap.servers' must be specified.
     /// </summary>
     public ProducerBuilder(IEnumerable<KeyValuePair<string, string>> config)
     {
+        var disabledReports = config.Any(p =>
+            p.Key == ConfigPropertyNames.Producer.EnableDeliveryReports
+            && p.Value != null
+            && bool.Parse(p.Value) == false);
+
+        if (disabledReports)
+            throw new NotSupportedException(
+                "Disabled delivery reports is not supported. Config property: EnableDeliveryReports must be true");
+
+        _inner = new(config);
+    }
+
+    public ProducerBuilder(ProducerConfig config)
+    {
+        if (config.EnableDeliveryReports == false)
+            throw new NotSupportedException(
+                "Disabled delivery reports is not supported. Config property: EnableDeliveryReports must be true");
         _inner = new(config);
     }
 

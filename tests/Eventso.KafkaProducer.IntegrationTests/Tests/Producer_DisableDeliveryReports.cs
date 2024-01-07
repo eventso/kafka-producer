@@ -27,7 +27,7 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
     /// </summary>
     public partial class Tests
     {
-        [Theory, MemberData(nameof(KafkaProducersParameters))]
+        [Theory(Skip = "Not allowed"), MemberData(nameof(KafkaProducersParameters))]
         public void Producer_DisableDeliveryReports(string bootstrapServers, TestProducerType producerType)
         {
             LogToFile("start Producer_DisableDeliveryReports");

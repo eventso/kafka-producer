@@ -88,13 +88,10 @@ internal static class LibrdProducer
 
     private static IntPtr MarshalHeaders(SafeKafkaHandle handle, IReadOnlyList<IHeader>? headers)
     {
-        var headersPtr = IntPtr.Zero;
-
         if (headers == null || headers.Count <= 0)
-            return headersPtr;
+            return IntPtr.Zero;
 
-
-        headersPtr = Librdkafka.headers_new((IntPtr)headers.Count);
+        var headersPtr = Librdkafka.headers_new((IntPtr)headers.Count);
 
         if (headersPtr == IntPtr.Zero)
             throw new Exception("Failed to create headers list.");
@@ -106,26 +103,33 @@ internal static class LibrdProducer
             if (header.Key == null)
                 throw new ArgumentNullException("Message header keys must not be null.");
 
-            var keyBytes = Encoding.UTF8.GetBytes(header.Key);
+            var err = MarshalHeader(headersPtr, header);
 
-            var valueBytes = header.GetValueBytes();
-
-            ErrorCode err;
-
-            unsafe
-            {
-                fixed (byte* pKey = keyBytes, pValue = valueBytes)
-                    err = Librdkafka.headers_add(
-                        headersPtr,
-                        (IntPtr)pKey, (IntPtr)keyBytes.Length,
-                        (IntPtr)pValue, (IntPtr)(valueBytes == null ? 0 : valueBytes.Length));
-
-
-                if (err != ErrorCode.NoError)
-                    throw new KafkaException(handle.CreatePossiblyFatalError(err, null));
-            }
+            if (err != ErrorCode.NoError)
+                throw new KafkaException(handle.CreatePossiblyFatalError(err, null));
         }
 
         return headersPtr;
+    }
+
+    private static ErrorCode MarshalHeader(IntPtr headersPtr, IHeader header)
+    {
+        var keyLength = Encoding.UTF8.GetByteCount(header.Key);
+        var keyBytes = keyLength <= 512 ? stackalloc byte[keyLength] : new byte[keyLength];
+
+        Encoding.UTF8.GetBytes(header.Key, keyBytes);
+
+        var valueBytes = header.GetValueBytes();
+
+        unsafe
+        {
+            fixed (byte* pKey = keyBytes, pValue = valueBytes)
+            {
+                return Librdkafka.headers_add(
+                    headersPtr,
+                    (IntPtr)pKey, (IntPtr)keyBytes.Length,
+                    (IntPtr)pValue, (IntPtr)(valueBytes == null ? 0 : valueBytes.Length));
+            }
+        }
     }
 }
