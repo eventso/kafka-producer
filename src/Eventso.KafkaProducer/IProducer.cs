@@ -59,15 +59,12 @@ public interface IProducer : IClient
     ///     report corresponding to the produce request,
     ///     or an exception if an error occurred.
     /// </returns>
-    /// <exception cref="Confluent.Kafka.ProduceException">
+    /// <exception cref="ProduceException">
     ///     Thrown in response to any produce request
     ///     that was unsuccessful for any reason
     ///     (excluding user application logic errors).
     ///     The Error property of the exception provides
     ///     more detailed information.
-    /// </exception>
-    /// <exception cref="System.ArgumentException">
-    ///     Thrown in response to invalid argument values.
     /// </exception>
     Task<DeliveryResult> ProduceAsync(
         string topic,
@@ -111,7 +108,7 @@ public interface IProducer : IClient
     ///     produce request (if enabled).
     /// </param>
     /// <param name="partition">The partition or null for using partitioner</param>
-    /// <exception cref="Confluent.Kafka.ProduceException">
+    /// <exception cref="ProduceException">
     ///     Thrown in response to any error that is known
     ///     immediately (excluding user application logic
     ///     errors), for example ErrorCode.Local_QueueFull.
@@ -120,14 +117,6 @@ public interface IProducer : IClient
     ///     parameter (if specified). The Error property of
     ///     the exception / delivery report provides more
     ///     detailed information.
-    /// </exception>
-    /// <exception cref="System.ArgumentException">
-    ///     Thrown in response to invalid argument values.
-    /// </exception>
-    /// <exception cref="System.InvalidOperationException">
-    ///     Thrown in response to error conditions that
-    ///     reflect an error in the application logic of
-    ///     the calling application.
     /// </exception>
     void Produce(
         string topic,

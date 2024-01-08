@@ -4,7 +4,7 @@ namespace Eventso.KafkaProducer;
 
 public sealed class ProducerBuilder
 {
-    private readonly ProducerBuilder<byte[], byte[]> _inner;
+    private readonly ProducerBuilder<byte[], byte[]> inner;
 
     /// <summary>
     ///     A collection of librdkafka configuration parameters
@@ -23,7 +23,7 @@ public sealed class ProducerBuilder
             throw new NotSupportedException(
                 "Disabled delivery reports is not supported. Config property: EnableDeliveryReports must be true");
 
-        _inner = new(config);
+        inner = new(config);
     }
 
     public ProducerBuilder(ProducerConfig config)
@@ -31,7 +31,7 @@ public sealed class ProducerBuilder
         if (config.EnableDeliveryReports == false)
             throw new NotSupportedException(
                 "Disabled delivery reports is not supported. Config property: EnableDeliveryReports must be true");
-        _inner = new(config);
+        inner = new(config);
     }
 
     /// <summary>
@@ -53,7 +53,7 @@ public sealed class ProducerBuilder
     /// </remarks>
     public ProducerBuilder SetStatisticsHandler(Action<IProducer<byte[], byte[]>, string> statisticsHandler)
     {
-        _inner.SetStatisticsHandler(statisticsHandler);
+        inner.SetStatisticsHandler(statisticsHandler);
         return this;
     }
 
@@ -63,7 +63,7 @@ public sealed class ProducerBuilder
     /// </summary>
     public ProducerBuilder SetPartitioner(string topic, PartitionerDelegate partitioner)
     {
-        _inner.SetPartitioner(topic, partitioner);
+        inner.SetPartitioner(topic, partitioner);
         return this;
     }
 
@@ -73,7 +73,7 @@ public sealed class ProducerBuilder
     /// </summary>
     public ProducerBuilder SetDefaultPartitioner(PartitionerDelegate partitioner)
     {
-        _inner.SetDefaultPartitioner(partitioner);
+        inner.SetDefaultPartitioner(partitioner);
         return this;
     }
 
@@ -92,7 +92,7 @@ public sealed class ProducerBuilder
     /// </remarks>
     public ProducerBuilder SetErrorHandler(Action<IProducer<byte[], byte[]>, Error> errorHandler)
     {
-        _inner.SetErrorHandler(errorHandler);
+        inner.SetErrorHandler(errorHandler);
         return this;
     }
 
@@ -117,7 +117,7 @@ public sealed class ProducerBuilder
     /// </remarks>
     public ProducerBuilder SetLogHandler(Action<IProducer<byte[], byte[]>, LogMessage> logHandler)
     {
-        _inner.SetLogHandler(logHandler);
+        inner.SetLogHandler(logHandler);
         return this;
     }
 
@@ -146,13 +146,13 @@ public sealed class ProducerBuilder
     public ProducerBuilder SetOAuthBearerTokenRefreshHandler(
         Action<IProducer<byte[], byte[]>, string> oAuthBearerTokenRefreshHandler)
     {
-        _inner.SetOAuthBearerTokenRefreshHandler(oAuthBearerTokenRefreshHandler);
+        inner.SetOAuthBearerTokenRefreshHandler(oAuthBearerTokenRefreshHandler);
         return this;
     }
 
     public IProducer Build()
     {
-        var baseProducer = _inner.Build();
+        var baseProducer = inner.Build();
         return new Producer(baseProducer);
     }
 }
