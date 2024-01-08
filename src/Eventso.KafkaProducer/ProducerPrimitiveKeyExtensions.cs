@@ -1,5 +1,7 @@
-﻿using System.Buffers;
+﻿using System;
+using System.Buffers;
 using System.Buffers.Binary;
+using System.Runtime.InteropServices;
 using System.Text;
 using Confluent.Kafka;
 
@@ -184,7 +186,6 @@ public static class ProducerPrimitiveKeyExtensions
         }
     }
 
-#if NET8_0_OR_GREATER
 
     /// Convert Guid to bytes with big endian bytes ordering  
     public static Task<DeliveryResult> ProduceAsync(
@@ -199,7 +200,7 @@ public static class ProducerPrimitiveKeyExtensions
     {
         Span<byte> keyBytes = stackalloc byte[16];
 
-        key.TryWriteBytes(keyBytes, bigEndian: true, out _);
+        WriteGuidBytesBigEndian(key, keyBytes);
 
         return producer.ProduceAsync(topic, keyBytes, value, cancellationToken, headers, timestamp, partition);
     }
@@ -217,9 +218,38 @@ public static class ProducerPrimitiveKeyExtensions
     {
         Span<byte> keyBytes = stackalloc byte[16];
 
-        key.TryWriteBytes(keyBytes, bigEndian: true, out _);
+        WriteGuidBytesBigEndian(key, keyBytes);
 
         producer.Produce(topic, keyBytes, value, headers, timestamp, deliveryHandler, partition);
+    }
+
+
+    private static void WriteGuidBytesBigEndian(Guid value, Span<byte> bytes)
+    {
+        // source https://github.com/npgsql/npgsql/blob/main/src/Npgsql/Internal/Converters/Primitive/GuidUuidConverter.cs
+#if NET8_0_OR_GREATER
+        value.TryWriteBytes(bytes, bigEndian: true, out _);
+#else
+        var raw = new GuidRaw(value);
+        BinaryPrimitives.WriteInt32BigEndian(bytes, raw.Data1);
+        BinaryPrimitives.WriteInt16BigEndian(bytes[4..], raw.Data2);
+        BinaryPrimitives.WriteInt16BigEndian(bytes[6..], raw.Data3);
+        BinaryPrimitives.WriteInt64BigEndian(
+            bytes[8..],
+            BitConverter.IsLittleEndian ? BinaryPrimitives.ReverseEndianness(raw.Data4) : raw.Data4);
+#endif
+    }
+
+#if !NET8_0_OR_GREATER
+    [StructLayout(LayoutKind.Explicit)]
+    struct GuidRaw
+    {
+        [FieldOffset(0)] public Guid Value;
+        [FieldOffset(0)] public int Data1;
+        [FieldOffset(4)] public short Data2;
+        [FieldOffset(6)] public short Data3;
+        [FieldOffset(8)] public long Data4;
+        public GuidRaw(Guid value) : this() => Value = value;
     }
 #endif
 }
