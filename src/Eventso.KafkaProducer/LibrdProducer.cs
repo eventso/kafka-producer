@@ -115,11 +115,17 @@ internal static class LibrdProducer
 
     private static ErrorCode MarshalHeader(IntPtr headersPtr, IHeader header)
     {
-        var keyLength = Encoding.UTF8.GetByteCount(header.Key);
-        var keyBytes = keyLength <= StackThreshold ? stackalloc byte[keyLength] : new byte[keyLength];
+        var keyLength = Encoding.UTF8.GetMaxByteCount(header.Key.Length);
+        var allocateOnStack = keyLength <= StackThreshold;
 
-        Encoding.UTF8.GetBytes(header.Key, keyBytes);
+        var keyBytes = allocateOnStack ? stackalloc byte[keyLength] : Encoding.UTF8.GetBytes(header.Key);
 
+        if (allocateOnStack)
+        {
+            var written = Encoding.UTF8.GetBytes(header.Key, keyBytes);
+            keyBytes = keyBytes[..written];
+        }
+        
         var valueBytes = header.GetValueBytes();
 
         unsafe

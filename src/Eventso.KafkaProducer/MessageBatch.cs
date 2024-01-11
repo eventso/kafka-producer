@@ -1,4 +1,5 @@
 using Confluent.Kafka;
+using Confluent.Kafka.Impl;
 
 namespace Eventso.KafkaProducer;
 
@@ -7,7 +8,7 @@ namespace Eventso.KafkaProducer;
 /// </summary>
 public sealed class MessageBatch
 {
-    private readonly IProducer producer;
+    private readonly SafeKafkaHandle producerHandle;
     private readonly string topic;
     private readonly DeliveryCounterHandler handler;
     private int sentCount;
@@ -15,7 +16,7 @@ public sealed class MessageBatch
 
     public MessageBatch(IProducer producer, string topic)
     {
-        this.producer = producer;
+        this.producerHandle = producer.Handle.LibrdkafkaHandle;
         this.topic = topic;
         handler = new DeliveryCounterHandler(topic);
     }
@@ -71,7 +72,7 @@ public sealed class MessageBatch
         try
         {
             BinaryProducer.Produce(
-                producer.Handle.LibrdkafkaHandle,
+                producerHandle,
                 topic,
                 value,
                 key,

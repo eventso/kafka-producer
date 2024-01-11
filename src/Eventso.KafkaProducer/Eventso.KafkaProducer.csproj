@@ -5,6 +5,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <None Remove="Eventso.KafkaProducer.csproj.DotSettings" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<InternalsAssemblyName Include="Confluent.Kafka" />
 	</ItemGroup>
 	

@@ -189,6 +189,7 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
             string key2 = "QWERTYUIO#";
             string key3 = string.Empty;
             string key4 = new string('x', 8000);
+            string? key5 = null;
 
             using (var topic = new TemporaryTopic(bootstrapServers, 1))
             {
@@ -202,6 +203,9 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
                     await producer1.ProduceAsync(topic.Name, key2, value, partition: 0);
                     producer1.Produce(topic.Name, key3, value);
                     producer1.Produce(topic.Name, key4, value, partition: 0);
+
+                    await producer1.ProduceAsync(topic.Name, key5, value, partition: 0);
+                    producer1.Produce(topic.Name, key5, value);
                 }
 
                 var consumerConfig = new ConsumerConfig
@@ -221,6 +225,12 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
 
                     var r4 = consumer.Consume(TimeSpan.FromSeconds(10));
                     Assert.Equal(key4, r4.Message.Key);
+
+                    var r5 = consumer.Consume(TimeSpan.FromSeconds(10));
+                    Assert.Equal(key5, r5.Message.Key);
+
+                    var r6 = consumer.Consume(TimeSpan.FromSeconds(10));
+                    Assert.Equal(key5, r6.Message.Key);
                 }
             }
 
