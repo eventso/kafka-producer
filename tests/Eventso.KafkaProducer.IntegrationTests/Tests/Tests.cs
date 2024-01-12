@@ -130,7 +130,7 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
 
         public static IEnumerable<object[]> KafkaProducersParameters()
         {
-            foreach (var kafkaParameter in kafkaParameters)
+            foreach (var kafkaParameter in (kafkaParameters ?? new List<object[]>()))
             {
                 yield return kafkaParameter.Append(TestProducerType.KeyValue).ToArray();
                 yield return kafkaParameter.Append(TestProducerType.Binary).ToArray();

@@ -23,10 +23,6 @@ using Xunit;
 
 namespace Eventso.KafkaProducer.IntegrationTests.Tests
 {
-    /// <summary>
-    ///     Test a variety of cases where a producer is constructed
-    ///     using the handle from another producer.
-    /// </summary>
     public partial class Tests
     {
         [Theory, MemberData(nameof(KafkaParameters))]

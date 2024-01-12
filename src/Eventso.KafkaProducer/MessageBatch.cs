@@ -101,7 +101,7 @@ public sealed class MessageBatch
     ///     A Task which will complete when all messages in the batch
     ///     will be delivered.
     /// </returns>
-    public Task Complete(CancellationToken token)
+    public Task Complete(CancellationToken token = default)
     {
         Volatile.Write(ref completed, true);
 
@@ -143,7 +143,7 @@ public sealed class MessageBatch
                     Headers = deliveryReport.Message.Headers,
                     Topic = topic
                 };
-
+                CancellationTokenRegistration.Dispose();
                 TrySetException(new ProduceException(deliveryReport.Error, result));
             }
         }

@@ -2,11 +2,11 @@
 
 namespace Eventso.KafkaProducer;
 
-/// <summary>
-/// Extends binary producer with frequently used key types
-/// </summary>
 public static class ProducerExtensions
 {
+    public static MessageBatch CreateBatch(this IProducer producer, string topic)
+        => new MessageBatch(producer, topic);
+
     public static Task<DeliveryResult> ProduceAsync(
         this IProducer producer,
         TopicPartition topicPartition,
