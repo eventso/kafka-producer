@@ -209,15 +209,9 @@ public static class TypedKeyExtensions
         Partition? partition = null)
         where TKey : IBinarySerializable
     {
-        var size = key.GetSize();
-
-        var allocOnStack = size <= StackThreshold;
-        var keyBytesPooled = allocOnStack ? null : ArrayPool<byte>.Shared.Rent(size);
-        var keyBytes = size == 0
-            ? Span<byte>.Empty
-            : allocOnStack
-                ? stackalloc byte[size]
-                : keyBytesPooled;
+        var keySize = key.GetSize();
+        var keyBytesPooled = keySize <= StackThreshold ? null : ArrayPool<byte>.Shared.Rent(keySize);
+        var keyBytes = keySize == 0 ? Span<byte>.Empty : keyBytesPooled ?? stackalloc byte[keySize];
 
         try
         {
@@ -243,15 +237,9 @@ public static class TypedKeyExtensions
         Partition? partition = null)
         where TKey : IBinarySerializable
     {
-        var size = key.GetSize();
-
-        var allocOnStack = size <= StackThreshold;
-        var keyBytesPooled = allocOnStack ? null : ArrayPool<byte>.Shared.Rent(size);
-        var keyBytes = size == 0
-            ? Span<byte>.Empty
-            : allocOnStack
-                ? stackalloc byte[size]
-                : keyBytesPooled;
+        var keySize = key.GetSize();
+        var keyBytesPooled = keySize <= StackThreshold ? null : ArrayPool<byte>.Shared.Rent(keySize);
+        var keyBytes = keySize == 0 ? Span<byte>.Empty : keyBytesPooled ?? stackalloc byte[keySize];
 
         try
         {
@@ -275,15 +263,9 @@ public static class TypedKeyExtensions
         Partition? partition = null)
         where TKey : IBinarySerializable
     {
-        var size = key.GetSize();
-
-        var allocOnStack = size <= StackThreshold;
-        var keyBytesPooled = allocOnStack ? null : ArrayPool<byte>.Shared.Rent(size);
-        var keyBytes = size == 0
-            ? Span<byte>.Empty
-            : allocOnStack
-                ? stackalloc byte[size]
-                : keyBytesPooled;
+        var keySize = key.GetSize();
+        var keyBytesPooled = keySize <= StackThreshold ? null : ArrayPool<byte>.Shared.Rent(keySize);
+        var keyBytes = keySize == 0 ? Span<byte>.Empty : keyBytesPooled ?? stackalloc byte[keySize];
 
         try
         {
