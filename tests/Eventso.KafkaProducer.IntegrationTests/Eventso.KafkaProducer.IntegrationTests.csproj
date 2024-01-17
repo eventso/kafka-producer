@@ -6,6 +6,7 @@
     <AssemblyName>Confluent.Kafka.IntegrationTests</AssemblyName>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	<IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,13 +16,19 @@
   </ItemGroup>
 
   <ItemGroup>
+	<PackageReference Include="Google.Protobuf" />
     <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="Grpc.Tools">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="xunit" />
     <PackageReference Include="xunit.runner.visualstudio" />
   </ItemGroup>
 
   <ItemGroup>
+	<Protobuf Include="test.proto" Link="test.proto" GrpcServices="Client" />
     <ProjectReference Include="..\..\src\Eventso.KafkaProducer\Eventso.KafkaProducer.csproj" />
   </ItemGroup>
 

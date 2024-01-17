@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	</PropertyGroup>
+
+	<ItemGroup>
+    <ProjectReference Include="..\Eventso.KafkaProducer\Eventso.KafkaProducer.csproj" />
+  </ItemGroup>
+</Project>

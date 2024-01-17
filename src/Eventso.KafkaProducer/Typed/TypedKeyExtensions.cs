@@ -31,7 +31,7 @@ public static class TypedKeyExtensions
         Timestamp timestamp = default,
         Action<DeliveryReport>? deliveryHandler = null,
         Partition? partition = null)
-        => Produce<ShortValue>(producer, topic, key, value, headers, timestamp, deliveryHandler, partition);
+        => producer.Produce<ShortValue>(topic, key, value, headers, timestamp, deliveryHandler, partition);
 
     public static void Produce(
         this MessageBatch batch,
@@ -40,7 +40,7 @@ public static class TypedKeyExtensions
         Headers? headers = null,
         Timestamp timestamp = default,
         Partition? partition = null)
-        => Produce<ShortValue>(batch, key, value, headers, timestamp, partition);
+        => batch.Produce<ShortValue>(key, value, headers, timestamp, partition);
 
     public static Task<DeliveryResult> ProduceAsync(
         this IProducer producer,
@@ -62,7 +62,7 @@ public static class TypedKeyExtensions
         Timestamp timestamp = default,
         Action<DeliveryReport>? deliveryHandler = null,
         Partition? partition = null)
-        => Produce<IntValue>(producer, topic, key, value, headers, timestamp, deliveryHandler, partition);
+        => producer.Produce<IntValue>(topic, key, value, headers, timestamp, deliveryHandler, partition);
 
     public static void Produce(
         this MessageBatch batch,
@@ -71,7 +71,7 @@ public static class TypedKeyExtensions
         Headers? headers = null,
         Timestamp timestamp = default,
         Partition? partition = null)
-        => Produce<IntValue>(batch, key, value, headers, timestamp, partition);
+        => batch.Produce<IntValue>(key, value, headers, timestamp, partition);
 
     public static Task<DeliveryResult> ProduceAsync(
         this IProducer producer,
@@ -93,7 +93,7 @@ public static class TypedKeyExtensions
         Timestamp timestamp = default,
         Action<DeliveryReport>? deliveryHandler = null,
         Partition? partition = null)
-        => Produce<LongValue>(producer, topic, key, value, headers, timestamp, deliveryHandler, partition);
+        => producer.Produce<LongValue>(topic, key, value, headers, timestamp, deliveryHandler, partition);
 
     public static void Produce(
         this MessageBatch batch,
@@ -102,7 +102,7 @@ public static class TypedKeyExtensions
         Headers? headers = null,
         Timestamp timestamp = default,
         Partition? partition = null)
-        => Produce<LongValue>(batch, key, value, headers, timestamp, partition);
+        => batch.Produce<LongValue>(key, value, headers, timestamp, partition);
 
     public static Task<DeliveryResult> ProduceAsync(
         this IProducer producer,
@@ -115,8 +115,7 @@ public static class TypedKeyExtensions
         Partition? partition = null,
         Encoding? keyEncoding = default)
     {
-        return ProduceAsync<StringValue>(
-            producer,
+        return producer.ProduceAsync<StringValue>(
             topic,
             keyEncoding == null
                 ? new(key)
@@ -139,8 +138,7 @@ public static class TypedKeyExtensions
         Partition? partition = null,
         Encoding? keyEncoding = default)
     {
-        Produce<StringValue>(
-            producer,
+        producer.Produce<StringValue>(
             topic,
             keyEncoding == null
                 ? new(key)
@@ -160,7 +158,7 @@ public static class TypedKeyExtensions
         Timestamp timestamp = default,
         Partition? partition = null,
         Encoding? keyEncoding = default)
-        => Produce<StringValue>(batch, keyEncoding == null ? new(key) : new(key, keyEncoding), value, headers, timestamp, partition);
+        => batch.Produce<StringValue>(keyEncoding == null ? new(key) : new(key, keyEncoding), value, headers, timestamp, partition);
 
 
     /// Converts Guid to bytes with big endian bytes ordering  
@@ -186,7 +184,7 @@ public static class TypedKeyExtensions
         Timestamp timestamp = default,
         Action<DeliveryReport>? deliveryHandler = null,
         Partition? partition = null)
-        => Produce<GuidValue>(producer, topic, key, value, headers, timestamp, deliveryHandler, partition);
+        => producer.Produce<GuidValue>(topic, key, value, headers, timestamp, deliveryHandler, partition);
 
     /// Converts Guid to bytes with big endian bytes ordering  
     public static void Produce(
@@ -196,7 +194,7 @@ public static class TypedKeyExtensions
         Headers? headers = null,
         Timestamp timestamp = default,
         Partition? partition = null)
-        => Produce<GuidValue>(batch, key, value, headers, timestamp, partition);
+        => batch.Produce<GuidValue>(key, value, headers, timestamp, partition);
 
     private static Task<DeliveryResult> ProduceAsync<TKey>(
         this IProducer producer,

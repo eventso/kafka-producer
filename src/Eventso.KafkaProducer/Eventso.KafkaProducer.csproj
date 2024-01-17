@@ -2,6 +2,7 @@
 
 	<PropertyGroup>
 	  <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -13,6 +14,7 @@
 	</ItemGroup>
 	
 	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.HighPerformance" />
 		<PackageReference Include="Confluent.Kafka" />
 		<PackageReference Include="IgnoresAccessChecksToGenerator">
 		  <PrivateAssets>all</PrivateAssets>

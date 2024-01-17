@@ -1,3 +1,5 @@
+using System.Collections.Concurrent;
+using CommunityToolkit.HighPerformance.Buffers;
 using Confluent.Kafka;
 using Confluent.Kafka.Impl;
 
@@ -13,6 +15,10 @@ public sealed class MessageBatch
     private readonly DeliveryCounterHandler handler;
     private int sentCount;
     private bool completed;
+    private ArrayPoolBufferWriter<byte>? bufferWriter;
+
+    private int averageSize = 256;
+    private static readonly ConcurrentDictionary<string, int> TopicMessageAverageSize = new();
 
     public MessageBatch(IProducer producer, string topic)
     {
@@ -69,6 +75,9 @@ public sealed class MessageBatch
         if (handler.Task.IsFaulted)
             throw new InvalidOperationException("Producing faulted.", handler.Task.Exception);
 
+        if (bufferWriter != null)
+            averageSize = (averageSize + value.Length) / 2;
+
         try
         {
             BinaryProducer.Produce(
@@ -110,7 +119,22 @@ public sealed class MessageBatch
 
         handler.Complete(sentCount);
 
+        if (bufferWriter != null)
+        {
+            bufferWriter.Dispose();
+            TopicMessageAverageSize.AddOrUpdate(topic, averageSize, (_, avg) => (avg + averageSize) / 2);
+        }
+
         return handler.Task;
+    }
+
+    public IBuffer<byte> GetBuffer()
+    {
+        var capacity = TopicMessageAverageSize.TryGetValue(topic, out averageSize)
+            ? Math.Max(256, (int)(averageSize * 1.5))
+            : 512;
+
+        return bufferWriter ??= new ArrayPoolBufferWriter<byte>(capacity);
     }
 
     private sealed class DeliveryCounterHandler : TaskCompletionSource, IDeliveryHandler

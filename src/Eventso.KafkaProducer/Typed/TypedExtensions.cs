@@ -1,11 +1,9 @@
 ﻿using System.Buffers;
+using CommunityToolkit.HighPerformance.Buffers;
 using Confluent.Kafka;
 
 namespace Eventso.KafkaProducer;
 
-/// <summary>
-/// Extends binary producer with frequently used key types
-/// </summary>
 public static class TypedExtensions
 {
     private const int StackThreshold = 256;
@@ -13,8 +11,8 @@ public static class TypedExtensions
     public static Task<DeliveryResult> ProduceAsync<TKey, TValue>(
         this IProducer producer,
         string topic,
-        TKey key,
-        TValue value,
+        in TKey key,
+        in TValue value,
         CancellationToken cancellationToken = default,
         Headers? headers = null,
         Timestamp timestamp = default,
@@ -58,8 +56,8 @@ public static class TypedExtensions
     public static void Produce<TKey, TValue>(
         this IProducer producer,
         string topic,
-        TKey key,
-        TValue value,
+        in TKey key,
+        in TValue value,
         Headers? headers = null,
         Timestamp timestamp = default,
         Action<DeliveryReport>? deliveryHandler = null,
@@ -102,8 +100,8 @@ public static class TypedExtensions
 
     public static void Produce<TKey, TValue>(
         this MessageBatch batch,
-        TKey key,
-        TValue value,
+        in TKey key,
+        in TValue value,
         Headers? headers = null,
         Timestamp timestamp = default,
         Partition? partition = null)
@@ -138,6 +136,123 @@ public static class TypedExtensions
 
             if (valueBytesPooled != null)
                 ArrayPool<byte>.Shared.Return(valueBytesPooled);
+        }
+    }
+
+
+    public static Task<DeliveryResult> ProduceAsync<TKey, TValue>(
+        this IProducer producer,
+        string topic,
+        in TKey key,
+        in TValue value,
+        IBuffer<byte> buffer,
+        CancellationToken cancellationToken = default,
+        Headers? headers = null,
+        Timestamp timestamp = default,
+        Partition? partition = null)
+        where TKey : IBinarySerializable
+        where TValue : IBinaryBufferWritable
+    {
+        var keySize = key.GetSize();
+        var keyBytesPooled = keySize <= StackThreshold ? null : ArrayPool<byte>.Shared.Rent(keySize);
+        var keyBytes = keySize == 0 ? Span<byte>.Empty : keyBytesPooled ?? stackalloc byte[keySize];
+
+        try
+        {
+            var keyBytesWritten = key.WriteBytes(keyBytes);
+
+            buffer.Clear();
+            value.WriteBytes(buffer);
+
+            return producer.ProduceAsync(
+                topic,
+                keyBytes[..keyBytesWritten],
+                buffer.WrittenSpan,
+                cancellationToken,
+                headers,
+                timestamp,
+                partition);
+        }
+        finally
+        {
+            if (keyBytesPooled != null)
+                ArrayPool<byte>.Shared.Return(keyBytesPooled);
+        }
+    }
+
+    public static void Produce<TKey, TValue>(
+        this IProducer producer,
+        string topic,
+        in TKey key,
+        in TValue value,
+        IBuffer<byte> buffer,
+        Headers? headers = null,
+        Timestamp timestamp = default,
+        Action<DeliveryReport>? deliveryHandler = null,
+        Partition? partition = null)
+        where TKey : IBinarySerializable
+        where TValue : IBinaryBufferWritable
+    {
+        var keySize = key.GetSize();
+        var keyBytesPooled = keySize <= StackThreshold ? null : ArrayPool<byte>.Shared.Rent(keySize);
+        var keyBytes = keySize == 0 ? Span<byte>.Empty : keyBytesPooled ?? stackalloc byte[keySize];
+
+        try
+        {
+            var keyBytesWritten = key.WriteBytes(keyBytes);
+
+            buffer.Clear();
+            value.WriteBytes(buffer);
+
+            producer.Produce(
+                topic,
+                keyBytes[..keyBytesWritten],
+                buffer.WrittenSpan,
+                headers,
+                timestamp,
+                deliveryHandler,
+                partition);
+        }
+        finally
+        {
+            if (keyBytesPooled != null)
+                ArrayPool<byte>.Shared.Return(keyBytesPooled);
+        }
+    }
+
+    public static void Produce<TKey, TValue>(
+        this MessageBatch batch,
+        in TKey key,
+        in TValue value,
+        IBuffer<byte> buffer,
+        Headers? headers = null,
+        Timestamp timestamp = default,
+        Partition? partition = null)
+        where TKey : IBinarySerializable
+        where TValue : IBinaryBufferWritable
+    {
+        var keySize = key.GetSize();
+        var keyBytesPooled = keySize <= StackThreshold ? null : ArrayPool<byte>.Shared.Rent(keySize);
+        var keyBytes = keySize == 0 ? Span<byte>.Empty : keyBytesPooled ?? stackalloc byte[keySize];
+
+        try
+        {
+            var keyBytesWritten = key.WriteBytes(keyBytes);
+
+            buffer.Clear();
+            value.WriteBytes(buffer);
+
+            batch.Produce(
+                keyBytes[..keyBytesWritten],
+                buffer.WrittenSpan,
+                headers,
+                timestamp,
+                partition);
+        }
+        finally
+        {
+            if (keyBytesPooled != null)
+                ArrayPool<byte>.Shared.Return(keyBytesPooled);
         }
     }
 }
