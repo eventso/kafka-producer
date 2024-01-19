@@ -4,11 +4,10 @@
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	</PropertyGroup>
 
-
 	<ItemGroup>
-    <PackageReference Include="SpanJson" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Eventso.KafkaProducer\Eventso.KafkaProducer.csproj" />
-  </ItemGroup>
+		<PackageReference Include="SpanJson" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Eventso.KafkaProducer\Eventso.KafkaProducer.csproj" />
+	</ItemGroup>
 </Project>

@@ -1,16 +1,29 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<ProjectTypeGuids>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-		<AssemblyName>Confluent.Kafka.Benchmark</AssemblyName>
-		<TargetFramework>net6.0</TargetFramework>
+		<TargetFramework>net8.0</TargetFramework>
 		<OutputType>Exe</OutputType>
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>
 
+	<ItemGroup>
+	  <PackageReference Include="AutoFixture" />
+	  <PackageReference Include="BenchmarkDotNet" />
+	  <PackageReference Include="Google.Protobuf" />
+	  <PackageReference Include="Grpc.Tools">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	  </PackageReference>
+	</ItemGroup>
+
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\src\Eventso.KafkaProducer.Json\Eventso.KafkaProducer.Json.csproj" />
+		<ProjectReference Include="..\..\src\Eventso.KafkaProducer.Protobuf\Eventso.KafkaProducer.Protobuf.csproj" />
+		<ProjectReference Include="..\..\src\Eventso.KafkaProducer.SpanJson\Eventso.KafkaProducer.SpanJson.csproj" />
 		<ProjectReference Include="..\..\src\Eventso.KafkaProducer\Eventso.KafkaProducer.csproj" />
+
+		<Protobuf Include="test.proto" Link="test.proto" GrpcServices="Client" />
 	</ItemGroup>
 
 </Project>

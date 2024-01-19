@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package tests;
+
+message OrderProto {
+	int64 id = 1; 
+	string user_name = 2;
+	repeated Item items = 3;
+
+	message Item {
+		int64 id = 1;
+		string name = 2;
+		int32 quantity =3;
+		int32 seller_id = 4;
+		double discount =5;
+		double price = 6;
+	} 
+}

@@ -1,184 +1,170 @@
-//// Copyright 2016-2017 Confluent Inc.
-////
-//// Licensed under the Apache License, Version 2.0 (the "License");
-//// you may not use this file except in compliance with the License.
-//// You may obtain a copy of the License at
-////
-//// http://www.apache.org/licenses/LICENSE-2.0
-////
-//// Unless required by applicable law or agreed to in writing, software
-//// distributed under the License is distributed on an "AS IS" BASIS,
-//// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//// See the License for the specific language governing permissions and
-//// limitations under the License.
-////
-//// Refer to LICENSE for more information.
+using System.Text.Json;
+using AutoFixture;
+using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Order;
+using CommunityToolkit.HighPerformance.Buffers;
+using Confluent.Kafka;
+using Confluent.Kafka.Admin;
+using Eventso.KafkaProducer.Json;
+using Eventso.KafkaProducer.Protobuf;
+using Google.Protobuf;
+using Tests;
 
-//using System;
-//using System.Threading.Tasks;
-//using System.Threading;
-//using System.Linq;
+namespace Eventso.KafkaProducer.Benchmark;
 
+[MemoryDiagnoser]
+[Orderer(SummaryOrderPolicy.FastestToSlowest)]
+public class Producing
+{
+    private IProducer<long, OrderProto> confluentProducerProto = null!;
+    private IProducer<long, Order> confluentProducerJson = null!;
+    private IProducer binaryProducer = null!;
+    private const string Topic = "benchmark-topic";
 
-//namespace Confluent.Kafka.Benchmark
-//{
-//    public static class BenchmarkProducer
-//    {
-//        private static long BenchmarkProducerImpl(
-//            string bootstrapServers, 
-//            string topic, 
-//            int nMessages,
-//            int msgSize,
-//            int nTests, 
-//            int nHeaders,
-//            bool useDeliveryHandler,
-//            string username,
-//            string password)
-//        {
-//            // mirrors the librdkafka performance test example.
-//            var config = new ProducerConfig
-//            {
-//                BootstrapServers = bootstrapServers,
-//                QueueBufferingMaxMessages = 2000000,
-//                MessageSendMaxRetries = 3,
-//                RetryBackoffMs = 500 ,
-//                LingerMs = 100,
-//                DeliveryReportFields = "none",
-//                SaslUsername = username,
-//                SaslPassword = password,
-//                SecurityProtocol = username == null ? SecurityProtocol.Plaintext : SecurityProtocol.SaslSsl,
-//                SaslMechanism = SaslMechanism.Plain
-//            };
+    [GlobalSetup]
+    public async Task Setup()
+    {
+        var config = new ProducerConfig
+        {
+            BootstrapServers = "127.0.0.1:9092",
+            QueueBufferingMaxMessages = 2000000,
+            MessageSendMaxRetries = 3,
+            RetryBackoffMs = 500,
+            LingerMs = 1
+        };
 
-//            DeliveryResult<Null, byte[]> firstDeliveryReport = null;
+        confluentProducerProto = new ProducerBuilder<long, OrderProto>(config)
+            .SetValueSerializer(new ProtoSerializer())
+            .Build();
 
-//            Headers headers = null;
-//            if (nHeaders > 0)
-//            {
-//                headers = new Headers();
-//                for (int i=0; i<nHeaders; ++i)
-//                {
-//                    headers.Add($"header-{i+1}", new byte[] { (byte)i, (byte)(i+1), (byte)(i+2), (byte)(i+3) });
-//                }
-//            }
+        confluentProducerJson = new DependentProducerBuilder<long, Order>(confluentProducerProto.Handle)
+            .SetValueSerializer(new KafkaJsonSerializer())
+            .Build();
 
-//            using (var producer = new ProducerBuilder<Null, byte[]>(config).Build())
-//            {
-//                for (var j=0; j<nTests; j += 1)
-//                {
-//                    Console.WriteLine($"{producer.Name} producing on {topic} " + (useDeliveryHandler ? "[Action<Message>]" : "[Task]"));
+        binaryProducer = confluentProducerProto.CreateBinary();
 
-//                    byte cnt = 0;
-//                    var val = new byte[msgSize].Select(a => ++cnt).ToArray();
+        var adminClient = new DependentAdminClientBuilder(confluentProducerProto.Handle).Build();
+        await adminClient.CreateTopicsAsync(new List<TopicSpecification>
+        {
+            new() { Name = Topic, NumPartitions = 1, ReplicationFactor = 1 }
+        });
+    }
 
-//                    // this avoids including connection setup, topic creation time, etc.. in result.
-//                    firstDeliveryReport = producer.ProduceAsync(topic, new Message<Null, byte[]> { Value = val, Headers = headers }).Result;
+    [GlobalCleanup]
+    public async Task Cleanup()
+    {
+        var adminClient = new DependentAdminClientBuilder(confluentProducerProto.Handle).Build();
+        await adminClient.DeleteTopicsAsync(new[] { Topic });
+    }
 
-//                    var startTime = DateTime.Now.Ticks;
+    [Benchmark]
+    [ArgumentsSource(nameof(Data))]
+    public Task Confluent_Proto_WhenAll(IEnumerable<OrderProto> records)
+    {
+        return Task.WhenAll(records.Select(r
+            => confluentProducerProto.ProduceAsync(Topic, new Message<long, OrderProto> { Key = 123456L, Value = r })));
+    }
 
-//                    if (useDeliveryHandler)
-//                    {
-//                        var autoEvent = new AutoResetEvent(false);
-//                        var msgCount = nMessages;
-//                        Action<DeliveryReport<Null, byte[]>> deliveryHandler = (DeliveryReport<Null, byte[]> deliveryReport) => 
-//                        {
-//                            if (deliveryReport.Error.IsError)
-//                            {
-//                                // Not interested in benchmark results in the (unlikely) event there is an error.
-//                                Console.WriteLine($"A error occured producing a message: {deliveryReport.Error.Reason}");
-//                                Environment.Exit(1); // note: exceptions do not currently propagate to calling code from a deliveryHandler method.
-//                            }
+    [Benchmark]
+    [ArgumentsSource(nameof(DataJson))]
+    public Task Confluent_Json_WhenAll(IEnumerable<Order> records)
+    {
+        return Task.WhenAll(records.Select(r
+            => confluentProducerJson.ProduceAsync(Topic, new Message<long, Order> { Key = 123456L, Value = r })));
+    }
 
-//                            if (--msgCount == 0)
-//                            {
-//                                autoEvent.Set();
-//                            }
-//                        };
+    [Benchmark]
+    [ArgumentsSource(nameof(Data))]
+    public Task Binary_Proto_WhenAll(IEnumerable<OrderProto> records)
+    {
+        return Task.WhenAll(records.Select(r => binaryProducer.ProduceAsync(Topic, 123456L, r)));
+    }
 
-//                        for (int i = 0; i < nMessages; i += 1)
-//                        {
-//                            try
-//                            {
-//                                producer.Produce(topic, new Message<Null, byte[]> { Value = val, Headers = headers }, deliveryHandler);
-//                            }
-//                            catch (ProduceException<Null, byte[]> ex)
-//                            {
-//                                if (ex.Error.Code == ErrorCode.Local_QueueFull)
-//                                {
-//                                    producer.Poll(TimeSpan.FromSeconds(1));
-//                                    i -= 1;
-//                                }
-//                                else
-//                                {
-//                                    throw;
-//                                }
-//                            }
-//                        }
+    [Benchmark]
+    [ArgumentsSource(nameof(Data))]
+    public async Task Binary_Proto_Buffer_WhenAll(IEnumerable<OrderProto> records)
+    {
+        using var buffer = new ArrayPoolBufferWriter<byte>();
 
-//                        while (true)
-//                        {
-//                            if (autoEvent.WaitOne(TimeSpan.FromSeconds(1)))
-//                            {
-//                                break;
-//                            }
-//                            Console.WriteLine(msgCount);
-//                        }
-//                    }
-//                    else
-//                    {
-//                        try
-//                        {
-//                            var tasks = new Task[nMessages];
-//                            for (int i = 0; i < nMessages; i += 1)
-//                            {
-//                                tasks[i] = producer.ProduceAsync(topic, new Message<Null, byte[]> { Value = val, Headers = headers });
-//                                if (tasks[i].IsFaulted)
-//                                {
-//                                    if (((ProduceException<Null, byte[]>)tasks[i].Exception.InnerException).Error.Code == ErrorCode.Local_QueueFull)
-//                                    {
-//                                        producer.Poll(TimeSpan.FromSeconds(1));
-//                                        i -= 1;
-//                                    }
-//                                    else
-//                                    {
-//                                        // unexpected, abort benchmark test.
-//                                        throw tasks[i].Exception;
-//                                    }
-//                                }
-//                            }
+        await Task.WhenAll(records.Select(r => binaryProducer.ProduceAsync(Topic, 123456L, r, buffer)));
+    }
 
-//                            Task.WaitAll(tasks);
-//                        }
-//                        catch (AggregateException ex)
-//                        {
-//                            Console.WriteLine(ex.Message);
-//                        }
-//                    }
+    [Benchmark]
+    [ArgumentsSource(nameof(Data))]
+    public async Task Binary_Proto_MessageBatch(IEnumerable<OrderProto> records)
+    {
+        var batch = binaryProducer.CreateBatch(Topic);
+        foreach (var record in records)
+            batch.Produce(123456L, record);
 
-//                    var duration = DateTime.Now.Ticks - startTime;
+        await batch.Complete();
+    }
 
-//                    Console.WriteLine($"Produced {nMessages} messages in {duration/10000.0:F0}ms");
-//                    Console.WriteLine($"{nMessages / (duration/10000.0):F0}k msg/s");
-//                }
+    [Benchmark]
+    [ArgumentsSource(nameof(Data))]
+    public async Task Binary_Proto_Buffer_MessageBatch(IEnumerable<OrderProto> records)
+    {
+        var batch = binaryProducer.CreateBatch(Topic);
+        foreach (var record in records)
+            batch.Produce(123456L, record, batch.GetBuffer());
 
-//                producer.Flush(TimeSpan.FromSeconds(10));
-//            }
+        await batch.Complete();
+    }
 
-//            return firstDeliveryReport.Offset;
-//        }
+    [Benchmark]
+    [ArgumentsSource(nameof(DataJson))]
+    public async Task Binary_Json_Buffer_MessageBatch(IEnumerable<Order> records)
+    {
+        var batch = binaryProducer.CreateBatch(Topic);
+        foreach (var record in records)
+            batch.ProduceJson(123456L, record, batch.GetBuffer());
 
-//        /// <summary>
-//        ///     Producer benchmark masquerading as an integration test.
-//        ///     Uses Task based produce method.
-//        /// </summary>
-//        public static long TaskProduce(string bootstrapServers, string topic, int nMessages, int msgSize, int nHeaders, int nTests, string username, string password)
-//            => BenchmarkProducerImpl(bootstrapServers, topic, nMessages, msgSize, nTests, nHeaders, false, username, password);
+        await batch.Complete();
+    }
 
-//        /// <summary>
-//        ///     Producer benchmark (with custom delivery handler) masquerading
-//        ///     as an integration test. Uses Task based produce method.
-//        /// </summary>
-//        public static long DeliveryHandlerProduce(string bootstrapServers, string topic, int nMessages, int msgSize, int nHeaders, int nTests, string username, string password)
-//            => BenchmarkProducerImpl(bootstrapServers, topic, nMessages, msgSize, nTests, nHeaders, true, username, password);
-//    }
-//}
+    [Benchmark]
+    [ArgumentsSource(nameof(DataJson))]
+    public async Task Binary_SpanJson_MessageBatch(IEnumerable<Order> records)
+    {
+        var batch = binaryProducer.CreateBatch(Topic);
+        foreach (var record in records)
+            Eventso.KafkaProducer.SpanJson.JsonValueExtensions.ProduceJson(batch, 123456L, record);
+
+        await batch.Complete();
+    }
+
+    public IEnumerable<OrderProto[]> Data()
+    {
+        var fixture = new Fixture { RepeatCount = 5 };
+
+        yield return fixture.CreateMany<OrderProto>(100).ToArray();
+        yield return fixture.CreateMany<OrderProto>(1000).ToArray();
+        yield return fixture.CreateMany<OrderProto>(10000).ToArray();
+    }
+
+    public IEnumerable<Order[]> DataJson()
+    {
+        var fixture = new Fixture { RepeatCount = 5 };
+
+        yield return fixture.CreateMany<Order>(100).ToArray();
+        yield return fixture.CreateMany<Order>(1000).ToArray();
+        yield return fixture.CreateMany<Order>(10000).ToArray();
+    }
+
+    private class ProtoSerializer : ISerializer<OrderProto>
+    {
+        public byte[] Serialize(OrderProto data, SerializationContext context)
+            => data.ToByteArray();
+    }
+
+    private class KafkaJsonSerializer : ISerializer<Order>
+    {
+        public byte[] Serialize(Order data, SerializationContext context)
+            => JsonSerializer.SerializeToUtf8Bytes(data);
+    }
+
+    public sealed record Order(long Id, string UserName, Order.Item[] Items)
+    {
+        public sealed record Item(long Id, string Name, int Quantity, int SellerId, double Discount, double Price);
+    }
+}
