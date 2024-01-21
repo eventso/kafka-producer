@@ -28,7 +28,7 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
         ///     as expected.
         /// </summary>
         [Theory, MemberData(nameof(KafkaProducersParameters))]
-        public void NullVsEmpty(string bootstrapServers, TestProducerType producerType)
+        public async Task NullVsEmpty(string bootstrapServers, TestProducerType producerType)
         {
             LogToFile("start NullVsEmpty");
 
@@ -44,10 +44,10 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
             using (var producer = new TestProducerBuilder<byte[]?, byte[]?>(producerConfig, producerType).Build())
             {
                 // Assume that all these produce calls succeed.
-                dr = producer.ProduceAsync(new TopicPartition(singlePartitionTopic, 0), new Message<byte[]?, byte[]?> { Key = null, Value = null }).Result;
-                producer.ProduceAsync(new TopicPartition(singlePartitionTopic, 0), new Message<byte[]?, byte[]?> { Key = null, Value = new byte[0] {} }).Wait();
-                producer.ProduceAsync(new TopicPartition(singlePartitionTopic, 0), new Message<byte[]?, byte[]?> { Key = new byte[0] {}, Value = null }).Wait();
-                producer.ProduceAsync(new TopicPartition(singlePartitionTopic, 0), new Message<byte[]?, byte[]?> { Key = new byte[0] {}, Value = new byte[0] {} }).Wait();
+                dr = await producer.ProduceAsync(new TopicPartition(singlePartitionTopic, 0), new Message<byte[]?, byte[]?> { Key = null, Value = null });
+                await producer.ProduceAsync(new TopicPartition(singlePartitionTopic, 0), new Message<byte[]?, byte[]?> { Key = null, Value = new byte[0] {} });
+                await producer.ProduceAsync(new TopicPartition(singlePartitionTopic, 0), new Message<byte[]?, byte[]?> { Key = new byte[0] {}, Value = null });
+                await producer.ProduceAsync(new TopicPartition(singlePartitionTopic, 0), new Message<byte[]?, byte[]?> { Key = new byte[0] { }, Value = new byte[0] { } });
                 producer.Flush(TimeSpan.FromSeconds(10));
             }
 

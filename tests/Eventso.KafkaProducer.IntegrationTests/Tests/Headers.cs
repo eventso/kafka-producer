@@ -27,7 +27,7 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
         ///     Test various message header produce / consume scenarios.
         /// </summary>
         [Theory, MemberData(nameof(KafkaProducersParameters))]
-        public void MessageHeaderProduceConsume(string bootstrapServers, TestProducerType producerType)
+        public async Task MessageHeaderProduceConsume(string bootstrapServers, TestProducerType producerType)
         {
             LogToFile("start MessageHeaderProduceConsume");
 
@@ -52,33 +52,33 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
                 // single header value.
                 var headers = new Headers();
                 headers.Add("test-header", new byte[] { 142 } );
-                dr_single = producer.ProduceAsync(
+                dr_single = await producer.ProduceAsync(
                     singlePartitionTopic,
-                    new Message<Null, string> { Value = "the value", Headers = headers }).Result;
+                    new Message<Null, string> { Value = "the value", Headers = headers });
                 Assert.Single(dr_single.Message.Headers);
                 Assert.Equal("test-header", dr_single.Message.Headers[0].Key);
                 Assert.Equal(new byte[] { 142 }, dr_single.Message.Headers[0].GetValueBytes());
 
                 // empty header values
                 var headers0 = new Headers();
-                dr_empty = producer.ProduceAsync(
+                dr_empty = await producer.ProduceAsync(
                     singlePartitionTopic,
-                    new Message<Null, string> { Value = "the value", Headers = headers0 }).Result;
+                    new Message<Null, string> { Value = "the value", Headers = headers0 });
                 Assert.Empty(dr_empty.Message.Headers);
 
                 // null header value
-                dr_null = producer.ProduceAsync(
+                dr_null = await producer.ProduceAsync(
                     singlePartitionTopic,
-                    new Message<Null, string> { Value = "the value" }).Result;
+                    new Message<Null, string> { Value = "the value" });
                 Assert.Empty(dr_null.Message.Headers);
 
                 // multiple header values (also Headers no Dictionary, since order is tested).
                 var headers2 = new Headers();
                 headers2.Add("test-header-a", new byte[] { 111 } );
                 headers2.Add("test-header-b", new byte[] { 112 } );
-                dr_multiple = producer.ProduceAsync(
+                dr_multiple = await producer.ProduceAsync(
                     singlePartitionTopic,
-                    new Message<Null, string> { Value = "the value", Headers = headers2 }).Result;
+                    new Message<Null, string> { Value = "the value", Headers = headers2 });
                 Assert.Equal(2, dr_multiple.Message.Headers.Count);
                 Assert.Equal("test-header-a", dr_multiple.Message.Headers[0].Key);
                 Assert.Equal(new byte[] { 111 }, dr_multiple.Message.Headers[0].GetValueBytes());
@@ -92,7 +92,7 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
                 headers3.Add(new Header("test-header-a", new byte[] { 113 } ));
                 headers3.Add(new Header("test-header-b", new byte[] { 114 } ));
                 headers3.Add(new Header("test-header-c", new byte[] { 115 } ));
-                dr_duplicate = producer.ProduceAsync(singlePartitionTopic, new Message<Null, string> { Value = "the value", Headers = headers3 }).Result;
+                dr_duplicate = await producer.ProduceAsync(singlePartitionTopic, new Message<Null, string> { Value = "the value", Headers = headers3 });
                 Assert.Equal(5, dr_duplicate.Message.Headers.Count);
                 Assert.Equal("test-header-a", dr_duplicate.Message.Headers[0].Key);
                 Assert.Equal(new byte[] { 111 }, dr_duplicate.Message.Headers[0].GetValueBytes());
@@ -101,12 +101,12 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
 
                 // Test headers work as expected with all serializing ProduceAsync variants.
 
-                dr_ol1 = producer.ProduceAsync(singlePartitionTopic, new Message<Null, string> { Value = "the value" }).Result;
+                dr_ol1 = await producer.ProduceAsync(singlePartitionTopic, new Message<Null, string> { Value = "the value" });
                 Assert.Empty(dr_ol1.Message.Headers);
-                dr_ol3 = producer.ProduceAsync(
+                dr_ol3 = await producer.ProduceAsync(
                     new TopicPartition(singlePartitionTopic, 0),
                     new Message<Null, string> { Value = "the value", Headers = headers }
-                ).Result;
+                );
                 Assert.Single(dr_ol3.Message.Headers);
                 Assert.Equal("test-header", dr_ol3.Message.Headers[0].Key);
                 Assert.Equal(new byte[] { 142 }, dr_ol3.Message.Headers[0].GetValueBytes());
@@ -136,13 +136,13 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
 
                 // Test headers work as expected with all non-serializing ProduceAsync variants. 
 
-                dr_ol4 = producer.ProduceAsync(singlePartitionTopic, new Message<byte[], byte[]> { Headers = null }).Result;
+                dr_ol4 = await producer.ProduceAsync(singlePartitionTopic, new Message<byte[], byte[]> { Headers = null });
                 Assert.Empty(dr_ol4.Message.Headers);
-                dr_ol5 = producer.ProduceAsync(singlePartitionTopic, new Message<byte[], byte[]> { Headers = null }).Result;
+                dr_ol5 = await producer.ProduceAsync(singlePartitionTopic, new Message<byte[], byte[]> { Headers = null });
                 Assert.Empty(dr_ol5.Message.Headers);
-                dr_ol6 = producer.ProduceAsync(singlePartitionTopic, new Message<byte[], byte[]> { Headers = headers }).Result;
+                dr_ol6 = await producer.ProduceAsync(singlePartitionTopic, new Message<byte[], byte[]> { Headers = headers });
                 Assert.Single(dr_ol6.Message.Headers);
-                dr_ol7 = producer.ProduceAsync(singlePartitionTopic, new Message<byte[], byte[]> { Headers = headers }).Result;
+                dr_ol7 = await producer.ProduceAsync(singlePartitionTopic, new Message<byte[], byte[]> { Headers = headers });
                 Assert.Single(dr_ol7.Message.Headers);
 
                 // Test headers work as expected with all non-serializing Produce variants.
@@ -307,7 +307,7 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
             {
                 var headers = new Headers();
                 headers.Add("my-header", null);
-                nulldr = producer.ProduceAsync(singlePartitionTopic, new Message<Null, string> { Value = "test-value", Headers = headers }).Result;
+                nulldr = await producer.ProduceAsync(singlePartitionTopic, new Message<Null, string> { Value = "test-value", Headers = headers });
                 Assert.Single(nulldr.Headers);
                 Assert.Null(nulldr.Headers[0].GetValueBytes());
             }

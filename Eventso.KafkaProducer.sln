@@ -19,15 +19,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{F1DFF1A0-B140-41D5-9277-30DD827CF33C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eventso.KafkaProducer.Benchmark", "tests\Eventso.KafkaProducer.Benchmark\Eventso.KafkaProducer.Benchmark.csproj", "{CB786C13-EEB4-4DED-A572-67FD5AD31447}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eventso.KafkaProducer.IntegrationTests", "tests\Eventso.KafkaProducer.IntegrationTests\Eventso.KafkaProducer.IntegrationTests.csproj", "{A58F5136-64DF-47A0-B2BC-7F34BED6553C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventso.KafkaProducer.Protobuf", "src\Eventso.KafkaProducer.Protobuf\Eventso.KafkaProducer.Protobuf.csproj", "{C2F262BE-FDA5-450F-AA38-6A11745ACAA8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eventso.KafkaProducer.Protobuf", "src\Eventso.KafkaProducer.Protobuf\Eventso.KafkaProducer.Protobuf.csproj", "{C2F262BE-FDA5-450F-AA38-6A11745ACAA8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventso.KafkaProducer.SpanJson", "src\Eventso.KafkaProducer.SpanJson\Eventso.KafkaProducer.SpanJson.csproj", "{931EFD2D-120B-4FC1-93DE-A04C578E9F87}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eventso.KafkaProducer.SpanJson", "src\Eventso.KafkaProducer.SpanJson\Eventso.KafkaProducer.SpanJson.csproj", "{931EFD2D-120B-4FC1-93DE-A04C578E9F87}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventso.KafkaProducer.Json", "src\Eventso.KafkaProducer.Json\Eventso.KafkaProducer.Json.csproj", "{63FE80E1-6815-42CB-BEC9-6DA31DEED469}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eventso.KafkaProducer.Json", "src\Eventso.KafkaProducer.Json\Eventso.KafkaProducer.Json.csproj", "{63FE80E1-6815-42CB-BEC9-6DA31DEED469}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "benchmarks", "benchmarks", "{0CEB24CB-E5C6-4A9D-9A72-33D00B70D1EA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eventso.KafkaProducer.Benchmark", "benchmarks\Eventso.KafkaProducer.Benchmark\Eventso.KafkaProducer.Benchmark.csproj", "{BD8987CA-DF78-4ABB-B806-360F94755749}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,10 +41,6 @@ Global
 		{ED655E3A-8249-4F4F-9B86-9820139AACBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ED655E3A-8249-4F4F-9B86-9820139AACBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ED655E3A-8249-4F4F-9B86-9820139AACBE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CB786C13-EEB4-4DED-A572-67FD5AD31447}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CB786C13-EEB4-4DED-A572-67FD5AD31447}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CB786C13-EEB4-4DED-A572-67FD5AD31447}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CB786C13-EEB4-4DED-A572-67FD5AD31447}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A58F5136-64DF-47A0-B2BC-7F34BED6553C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A58F5136-64DF-47A0-B2BC-7F34BED6553C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A58F5136-64DF-47A0-B2BC-7F34BED6553C}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -59,17 +57,21 @@ Global
 		{63FE80E1-6815-42CB-BEC9-6DA31DEED469}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{63FE80E1-6815-42CB-BEC9-6DA31DEED469}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{63FE80E1-6815-42CB-BEC9-6DA31DEED469}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD8987CA-DF78-4ABB-B806-360F94755749}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD8987CA-DF78-4ABB-B806-360F94755749}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD8987CA-DF78-4ABB-B806-360F94755749}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD8987CA-DF78-4ABB-B806-360F94755749}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{ED655E3A-8249-4F4F-9B86-9820139AACBE} = {F1DFF1A0-B140-41D5-9277-30DD827CF33C}
-		{CB786C13-EEB4-4DED-A572-67FD5AD31447} = {90C913CD-982D-4F0E-9FD0-F98B69C4427D}
 		{A58F5136-64DF-47A0-B2BC-7F34BED6553C} = {90C913CD-982D-4F0E-9FD0-F98B69C4427D}
 		{C2F262BE-FDA5-450F-AA38-6A11745ACAA8} = {F1DFF1A0-B140-41D5-9277-30DD827CF33C}
 		{931EFD2D-120B-4FC1-93DE-A04C578E9F87} = {F1DFF1A0-B140-41D5-9277-30DD827CF33C}
 		{63FE80E1-6815-42CB-BEC9-6DA31DEED469} = {F1DFF1A0-B140-41D5-9277-30DD827CF33C}
+		{BD8987CA-DF78-4ABB-B806-360F94755749} = {0CEB24CB-E5C6-4A9D-9A72-33D00B70D1EA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4282985D-AB9F-4998-8C04-CB90F03E9DCD}

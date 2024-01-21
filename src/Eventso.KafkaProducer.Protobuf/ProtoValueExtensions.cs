@@ -29,15 +29,6 @@ public static class ProtoValueExtensions
         Partition? partition = null)
         => producer.Produce<ProtoValue>(topic, key, new(value), headers, timestamp, deliveryHandler, partition);
 
-    public static void Produce(
-        this MessageBatch batch,
-        ReadOnlySpan<byte> key,
-        IMessage value,
-        Headers? headers = null,
-        Timestamp timestamp = default,
-        Partition? partition = null)
-        => batch.Produce<ProtoValue>(key, new(value), headers, timestamp, partition);
-
     public static Task<DeliveryResult> ProduceAsync(
         this IProducer producer,
         string topic,
@@ -59,15 +50,6 @@ public static class ProtoValueExtensions
         Action<DeliveryReport>? deliveryHandler = null,
         Partition? partition = null)
         => producer.Produce<ShortValue, ProtoValue>(topic, key, new(value), headers, timestamp, deliveryHandler, partition);
-
-    public static void Produce(
-        this MessageBatch batch,
-        short key,
-        IMessage value,
-        Headers? headers = null,
-        Timestamp timestamp = default,
-        Partition? partition = null)
-        => batch.Produce<ShortValue, ProtoValue>(key, new(value), headers, timestamp, partition);
 
     public static Task<DeliveryResult> ProduceAsync(
         this IProducer producer,
@@ -91,15 +73,6 @@ public static class ProtoValueExtensions
         Partition? partition = null)
         => producer.Produce<IntValue, ProtoValue>(topic, key, new(value), headers, timestamp, deliveryHandler, partition);
 
-    public static void Produce(
-        this MessageBatch batch,
-        int key,
-        IMessage value,
-        Headers? headers = null,
-        Timestamp timestamp = default,
-        Partition? partition = null)
-        => batch.Produce<IntValue, ProtoValue>(key, new(value), headers, timestamp, partition);
-
     public static Task<DeliveryResult> ProduceAsync(
         this IProducer producer,
         string topic,
@@ -121,15 +94,6 @@ public static class ProtoValueExtensions
         Action<DeliveryReport>? deliveryHandler = null,
         Partition? partition = null)
         => producer.Produce<LongValue, ProtoValue>(topic, key, new(value), headers, timestamp, deliveryHandler, partition);
-
-    public static void Produce(
-        this MessageBatch batch,
-        long key,
-        IMessage value,
-        Headers? headers = null,
-        Timestamp timestamp = default,
-        Partition? partition = null)
-        => batch.Produce<LongValue, ProtoValue>(key, new(value), headers, timestamp, partition);
 
     public static Task<DeliveryResult> ProduceAsync(
         this IProducer producer,
@@ -177,18 +141,6 @@ public static class ProtoValueExtensions
             partition);
     }
 
-    public static void Produce(
-        this MessageBatch batch,
-        string? key,
-        IMessage value,
-        Headers? headers = null,
-        Timestamp timestamp = default,
-        Partition? partition = null,
-        Encoding? keyEncoding = default)
-        => batch.Produce<StringValue, ProtoValue>(keyEncoding == null ? new(key) : new(key, keyEncoding), new(value), headers, timestamp,
-            partition);
-
-
     /// Converts Guid to bytes with big endian bytes ordering  
     public static Task<DeliveryResult> ProduceAsync(
         this IProducer producer,
@@ -213,14 +165,4 @@ public static class ProtoValueExtensions
         Action<DeliveryReport>? deliveryHandler = null,
         Partition? partition = null)
         => producer.Produce<GuidValue, ProtoValue>(topic, key, new(value), headers, timestamp, deliveryHandler, partition);
-
-    /// Converts Guid to bytes with big endian bytes ordering  
-    public static void Produce(
-        this MessageBatch batch,
-        Guid key,
-        IMessage value,
-        Headers? headers = null,
-        Timestamp timestamp = default,
-        Partition? partition = null)
-        => batch.Produce<GuidValue, ProtoValue>(key, new(value), headers, timestamp, partition);
 }

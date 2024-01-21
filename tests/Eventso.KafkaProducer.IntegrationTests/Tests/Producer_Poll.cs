@@ -14,7 +14,6 @@
 //
 // Refer to LICENSE for more information.
 
-#pragma warning disable xUnit1026
 
 using System.Diagnostics;
 using Confluent.Kafka;
@@ -28,14 +27,14 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
     public partial class Tests
     {
         [Theory, MemberData(nameof(KafkaProducersParameters))]
-        public void Producer_Poll(string bootstrapServers, TestProducerType producerType)
+        public async Task Producer_Poll(string bootstrapServers, TestProducerType producerType)
         {
             LogToFile("start Producer_Poll");
 
             using (var tempTopic = new TemporaryTopic(bootstrapServers, 1))
             using (var producer = new TestProducerBuilder<Null, string>(new ProducerConfig { BootstrapServers = bootstrapServers }, producerType).Build())
             {
-                var r = producer.ProduceAsync(tempTopic.Name, new Message<Null, string> { Value = "a message" }).Result;
+                var r = await producer.ProduceAsync(tempTopic.Name, new Message<Null, string> { Value = "a message" });
                 Assert.True(r.Status == PersistenceStatus.Persisted);
 
                 // should be no events to serve and this should block for 500ms.

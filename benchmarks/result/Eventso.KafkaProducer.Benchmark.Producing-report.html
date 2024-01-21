@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8' />
+<title>Eventso.KafkaProducer.Benchmark.Producing-20240121-135253</title>
+
+<style type="text/css">
+	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
+	td, th { padding: 6px 13px; border: 1px solid #ddd; text-align: right; }
+	tr { background-color: #fff; border-top: 1px solid #ccc; }
+	tr:nth-child(even) { background: #f8f8f8; }
+</style>
+</head>
+<body>
+<pre><code>
+BenchmarkDotNet v0.13.12, Windows 10 (10.0.19045.3930/22H2/2022Update)
+11th Gen Intel Core i7-1185G7 3.00GHz, 1 CPU, 8 logical and 4 physical cores
+.NET SDK 8.0.101
+  [Host]     : .NET 8.0.1 (8.0.123.58001), X64 RyuJIT AVX-512F+CD+BW+DQ+VL+VBMI
+  DefaultJob : .NET 8.0.1 (8.0.123.58001), X64 RyuJIT AVX-512F+CD+BW+DQ+VL+VBMI
+</code></pre>
+<pre><code></code></pre>
+
+<table>
+<thead><tr><th>Method                    </th><th>MessageCount</th><th>Mean</th><th>Error</th><th>StdDev</th><th>Median</th><th>Gen0</th><th>Gen1</th><th>Gen2</th><th>Allocated</th>
+</tr>
+</thead><tbody><tr><td>Binary_Proto_Buffer_MessageBatch</td><td>1000</td><td>9.182 ms</td><td>0.3009 ms</td><td>0.8537 ms</td><td>9.091 ms</td><td>31.2500</td><td>-</td><td>-</td><td>281.76 KB</td>
+</tr><tr><td>Binary_Proto_MessageBatch</td><td>1000</td><td>9.220 ms</td><td>0.2548 ms</td><td>0.6890 ms</td><td>9.221 ms</td><td>31.2500</td><td>-</td><td>-</td><td>281.76 KB</td>
+</tr><tr><td>Binary_Proto_WhenAll</td><td>1000</td><td>9.797 ms</td><td>0.4949 ms</td><td>1.3877 ms</td><td>9.492 ms</td><td>93.7500</td><td>31.2500</td><td>-</td><td>594.54 KB</td>
+</tr><tr><td>Binary_Proto_Buffer_WhenAll</td><td>1000</td><td>10.339 ms</td><td>0.4960 ms</td><td>1.3908 ms</td><td>9.997 ms</td><td>93.7500</td><td>15.6250</td><td>-</td><td>594.65 KB</td>
+</tr><tr><td>Confluent_Proto_WhenAll</td><td>1000</td><td>10.979 ms</td><td>0.3478 ms</td><td>0.9638 ms</td><td>10.805 ms</td><td>203.1250</td><td>125.0000</td><td>-</td><td>1321.31 KB</td>
+</tr><tr><td>Binary_SpanJson_MessageBatch</td><td>1000</td><td>13.834 ms</td><td>0.3492 ms</td><td>0.9907 ms</td><td>13.720 ms</td><td>31.2500</td><td>-</td><td>-</td><td>281.66 KB</td>
+</tr><tr><td>Binary_Json_Buffer_MessageBatch</td><td>1000</td><td>14.813 ms</td><td>0.2952 ms</td><td>0.7829 ms</td><td>14.769 ms</td><td>109.3750</td><td>-</td><td>-</td><td>703.66 KB</td>
+</tr><tr><td>Confluent_Json_WhenAll</td><td>1000</td><td>16.791 ms</td><td>0.4752 ms</td><td>1.3787 ms</td><td>16.547 ms</td><td>281.2500</td><td>156.2500</td><td>-</td><td>1907.29 KB</td>
+</tr><tr><td>Binary_Proto_Buffer_MessageBatch</td><td>5000</td><td>26.799 ms</td><td>0.8270 ms</td><td>2.3994 ms</td><td>26.711 ms</td><td>218.7500</td><td>-</td><td>-</td><td>1406.83 KB</td>
+</tr><tr><td>Binary_Proto_MessageBatch</td><td>5000</td><td>27.673 ms</td><td>0.5426 ms</td><td>1.0454 ms</td><td>27.736 ms</td><td>218.7500</td><td>-</td><td>-</td><td>1406.83 KB</td>
+</tr><tr><td>Binary_Proto_Buffer_WhenAll</td><td>5000</td><td>29.296 ms</td><td>0.9628 ms</td><td>2.7471 ms</td><td>29.155 ms</td><td>437.5000</td><td>312.5000</td><td>-</td><td>2971.25 KB</td>
+</tr><tr><td>Binary_Proto_WhenAll</td><td>5000</td><td>31.977 ms</td><td>0.6759 ms</td><td>1.9285 ms</td><td>31.589 ms</td><td>428.5714</td><td>285.7143</td><td>-</td><td>2976.32 KB</td>
+</tr><tr><td>Confluent_Proto_WhenAll</td><td>5000</td><td>36.196 ms</td><td>0.9259 ms</td><td>2.5810 ms</td><td>35.691 ms</td><td>1000.0000</td><td>666.6667</td><td>-</td><td>6652.57 KB</td>
+</tr><tr><td>Binary_Proto_Buffer_MessageBatch</td><td>10000</td><td>49.588 ms</td><td>1.8133 ms</td><td>5.1145 ms</td><td>49.277 ms</td><td>333.3333</td><td>-</td><td>-</td><td>2813.28 KB</td>
+</tr><tr><td>Binary_Proto_MessageBatch</td><td>10000</td><td>51.473 ms</td><td>1.5911 ms</td><td>4.6414 ms</td><td>50.436 ms</td><td>454.5455</td><td>-</td><td>-</td><td>2813.21 KB</td>
+</tr><tr><td>Binary_SpanJson_MessageBatch</td><td>5000</td><td>52.179 ms</td><td>1.4200 ms</td><td>4.0052 ms</td><td>51.450 ms</td><td>200.0000</td><td>-</td><td>-</td><td>1406.82 KB</td>
+</tr><tr><td>Binary_Proto_WhenAll</td><td>10000</td><td>55.395 ms</td><td>2.1656 ms</td><td>6.2827 ms</td><td>55.583 ms</td><td>900.0000</td><td>400.0000</td><td>200.0000</td><td>5850.93 KB</td>
+</tr><tr><td>Binary_Json_Buffer_MessageBatch</td><td>5000</td><td>56.548 ms</td><td>1.7592 ms</td><td>4.9620 ms</td><td>56.224 ms</td><td>500.0000</td><td>-</td><td>-</td><td>3516.55 KB</td>
+</tr><tr><td>Binary_Proto_Buffer_WhenAll</td><td>10000</td><td>59.476 ms</td><td>2.0294 ms</td><td>5.7572 ms</td><td>59.633 ms</td><td>750.0000</td><td>250.0000</td><td>-</td><td>5890.76 KB</td>
+</tr><tr><td>Confluent_Proto_WhenAll</td><td>10000</td><td>70.414 ms</td><td>1.3629 ms</td><td>3.1587 ms</td><td>69.853 ms</td><td>2000.0000</td><td>1000.0000</td><td>500.0000</td><td>13304.7 KB</td>
+</tr><tr><td>Confluent_Json_WhenAll</td><td>5000</td><td>70.712 ms</td><td>3.1865 ms</td><td>9.1938 ms</td><td>67.757 ms</td><td>1000.0000</td><td>-</td><td>-</td><td>9583.21 KB</td>
+</tr><tr><td>Binary_SpanJson_MessageBatch</td><td>10000</td><td>100.186 ms</td><td>2.5342 ms</td><td>7.2303 ms</td><td>99.433 ms</td><td>333.3333</td><td>-</td><td>-</td><td>2813.19 KB</td>
+</tr><tr><td>Binary_Json_Buffer_MessageBatch</td><td>10000</td><td>109.274 ms</td><td>2.7443 ms</td><td>7.5587 ms</td><td>108.994 ms</td><td>1000.0000</td><td>-</td><td>-</td><td>7033.14 KB</td>
+</tr><tr><td>Confluent_Json_WhenAll</td><td>10000</td><td>117.574 ms</td><td>4.3187 ms</td><td>12.3216 ms</td><td>115.484 ms</td><td>3000.0000</td><td>1000.0000</td><td>-</td><td>19164.77 KB</td>
+</tr><tr><td>Binary_Proto_Buffer_MessageBatch</td><td>30000</td><td>137.687 ms</td><td>4.2871 ms</td><td>12.2314 ms</td><td>135.332 ms</td><td>1250.0000</td><td>-</td><td>-</td><td>8438.6 KB</td>
+</tr><tr><td>Binary_Proto_MessageBatch</td><td>30000</td><td>137.800 ms</td><td>4.4953 ms</td><td>12.8977 ms</td><td>134.260 ms</td><td>1250.0000</td><td>-</td><td>-</td><td>8438.61 KB</td>
+</tr><tr><td>Binary_Proto_Buffer_WhenAll</td><td>30000</td><td>153.744 ms</td><td>4.4629 ms</td><td>12.4409 ms</td><td>153.000 ms</td><td>2500.0000</td><td>1000.0000</td><td>500.0000</td><td>17230.07 KB</td>
+</tr><tr><td>Binary_Proto_WhenAll</td><td>30000</td><td>158.458 ms</td><td>5.6327 ms</td><td>16.1611 ms</td><td>154.716 ms</td><td>2500.0000</td><td>1500.0000</td><td>1000.0000</td><td>17113.17 KB</td>
+</tr><tr><td>Confluent_Proto_WhenAll</td><td>30000</td><td>192.746 ms</td><td>4.7317 ms</td><td>13.5761 ms</td><td>190.687 ms</td><td>6000.0000</td><td>2000.0000</td><td>1000.0000</td><td>39656.1 KB</td>
+</tr><tr><td>Binary_SpanJson_MessageBatch</td><td>30000</td><td>293.452 ms</td><td>9.3522 ms</td><td>26.9831 ms</td><td>288.169 ms</td><td>1000.0000</td><td>-</td><td>-</td><td>8439.43 KB</td>
+</tr><tr><td>Binary_Json_Buffer_MessageBatch</td><td>30000</td><td>322.736 ms</td><td>10.3859 ms</td><td>29.9658 ms</td><td>317.383 ms</td><td>3000.0000</td><td>-</td><td>-</td><td>21096.23 KB</td>
+</tr><tr><td>Confluent_Json_WhenAll</td><td>30000</td><td>431.281 ms</td><td>10.8341 ms</td><td>31.2590 ms</td><td>436.511 ms</td><td>10000.0000</td><td>3500.0000</td><td>1000.0000</td><td>57243.85 KB</td>
+</tr></tbody></table>
+</body>
+</html>

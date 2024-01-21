@@ -14,7 +14,7 @@
 //
 // Refer to LICENSE for more information.
 
-#pragma warning disable xUnit1026
+#pragma warning disable xUnit1031
 
 using Confluent.Kafka;
 using Xunit;

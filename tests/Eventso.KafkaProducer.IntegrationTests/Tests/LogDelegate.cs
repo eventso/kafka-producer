@@ -27,7 +27,7 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
         ///     Tests that log messages are received by OnLog on all Producer and Consumer variants.
         /// </summary>
         [Theory, MemberData(nameof(KafkaParameters))]
-        public void LogDelegate(string bootstrapServers)
+        public async Task LogDelegate(string bootstrapServers)
         {
             LogToFile("start LogDelegate");
 
@@ -59,7 +59,7 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
                     .SetLogHandler((_, m) => logCount += 1)
                     .Build())
             {
-                dr = producer.ProduceAsync(singlePartitionTopic, new Message<byte[], byte[]> { Value = Serializers.Utf8.Serialize("test value", SerializationContext.Empty) }).Result;
+                dr = await producer.ProduceAsync(singlePartitionTopic, new Message<byte[], byte[]> { Value = Serializers.Utf8.Serialize("test value", SerializationContext.Empty) });
                 producer.Flush(TimeSpan.FromSeconds(10));
             }
             Assert.True(logCount > 0);
@@ -69,7 +69,7 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
                     .SetLogHandler((_, m) => logCount += 1)
                     .Build())
             {
-                _ = producer.ProduceAsync(singlePartitionTopic, ReadOnlySpan<byte>.Empty, Serializers.Utf8.Serialize("test value", SerializationContext.Empty)).Result;
+                _ = producer.ProduceAsync(singlePartitionTopic, ReadOnlySpan<byte>.Empty, Serializers.Utf8.Serialize("test value", SerializationContext.Empty));
                 producer.Flush(TimeSpan.FromSeconds(10));
             }
             Assert.True(logCount > 0);

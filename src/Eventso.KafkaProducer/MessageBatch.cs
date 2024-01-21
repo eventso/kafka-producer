@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Runtime.CompilerServices;
 using CommunityToolkit.HighPerformance.Buffers;
 using Confluent.Kafka;
 using Confluent.Kafka.Impl;
@@ -128,13 +129,22 @@ public sealed class MessageBatch
         return handler.Task;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public IBuffer<byte> GetBuffer()
+    {
+        if (bufferWriter == null)
+            InitBuffer();
+
+        return bufferWriter!;
+    }
+
+    private void InitBuffer()
     {
         var capacity = TopicMessageAverageSize.TryGetValue(topic, out averageSize)
             ? Math.Max(256, (int)(averageSize * 1.5))
             : 512;
 
-        return bufferWriter ??= new ArrayPoolBufferWriter<byte>(capacity);
+        bufferWriter = new ArrayPoolBufferWriter<byte>(capacity);
     }
 
     private sealed class DeliveryCounterHandler : TaskCompletionSource, IDeliveryHandler

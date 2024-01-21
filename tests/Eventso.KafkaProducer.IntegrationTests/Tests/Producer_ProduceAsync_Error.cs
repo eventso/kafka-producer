@@ -14,11 +14,10 @@
 //
 // Refer to LICENSE for more information.
 
-#pragma warning disable xUnit1026
-
 using System.Text;
 using Confluent.Kafka;
 using Xunit;
+#pragma warning disable xUnit1031
 
 namespace Eventso.KafkaProducer.IntegrationTests.Tests
 {

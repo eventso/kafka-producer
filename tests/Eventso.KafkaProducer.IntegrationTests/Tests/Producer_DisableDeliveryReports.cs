@@ -36,7 +36,7 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
             byte[] TestValue = new byte[] { 5, 6, 7, 8 };
 
             var producerConfig = new ProducerConfig
-            { 
+            {
                 BootstrapServers = bootstrapServers,
                 EnableDeliveryReports = false,
                 // the below are just a few extra tests that the property is recognized (all 
@@ -76,7 +76,9 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
                     singlePartitionTopic,
                     new Message<byte[], byte[]> { Key = TestKey, Value = TestValue });
                 Assert.True(drTask.IsCompleted); // should complete immediately.
+#pragma warning disable xUnit1031
                 Assert.Equal(Offset.Unset, drTask.Result.Offset);
+
                 Assert.Equal(Partition.Any, drTask.Result.Partition);
                 Assert.Equal(singlePartitionTopic, drTask.Result.Topic);
                 Assert.Equal(TestKey, drTask.Result.Message.Key);
@@ -91,7 +93,7 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
                 Assert.Equal(singlePartitionTopic, drTask.Result.Topic);
                 Assert.Equal(TestKey, drTask.Result.Message.Key);
                 Assert.Equal(TestValue, drTask.Result.Message.Value);
-
+#pragma warning restore xUnit1031
                 Assert.Equal(0, producer.Flush(TimeSpan.FromSeconds(10)));
             }
 

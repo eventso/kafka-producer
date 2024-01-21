@@ -45,7 +45,9 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
                 }
             };
 
+#pragma warning disable xUnit1031
             mthd().Wait();
+#pragma warning restore xUnit1031
             
             Assert.Equal(0, Library.HandleCount);
             LogToFile("end   Producer_ProduceAsync_Await_Serializing");

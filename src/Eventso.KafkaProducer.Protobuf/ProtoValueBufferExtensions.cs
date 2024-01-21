@@ -36,11 +36,11 @@ public static class ProtoValueBufferExtensions
         this MessageBatch batch,
         ReadOnlySpan<byte> key,
         IMessage value,
-        IBuffer<byte> buffer,
+        IBuffer<byte>? buffer = null,
         Headers? headers = null,
         Timestamp timestamp = default,
         Partition? partition = null)
-        => batch.Produce<ProtoValue>(key, new(value), buffer, headers, timestamp, partition);
+        => batch.Produce<ProtoValue>(key, new(value), buffer ?? batch.GetBuffer(), headers, timestamp, partition);
 
     public static Task<DeliveryResult> ProduceAsync(
         this IProducer producer,
@@ -70,11 +70,11 @@ public static class ProtoValueBufferExtensions
         this MessageBatch batch,
         short key,
         IMessage value,
-        IBuffer<byte> buffer,
+        IBuffer<byte>? buffer = null,
         Headers? headers = null,
         Timestamp timestamp = default,
         Partition? partition = null)
-        => batch.Produce<ShortValue, ProtoValue>(key, new(value), buffer, headers, timestamp, partition);
+        => batch.Produce<ShortValue, ProtoValue>(key, new(value), buffer ?? batch.GetBuffer(), headers, timestamp, partition);
 
     public static Task<DeliveryResult> ProduceAsync(
         this IProducer producer,
@@ -104,11 +104,11 @@ public static class ProtoValueBufferExtensions
         this MessageBatch batch,
         int key,
         IMessage value,
-        IBuffer<byte> buffer,
+        IBuffer<byte>? buffer = null,
         Headers? headers = null,
         Timestamp timestamp = default,
         Partition? partition = null)
-        => batch.Produce<IntValue, ProtoValue>(key, new(value), buffer, headers, timestamp, partition);
+        => batch.Produce<IntValue, ProtoValue>(key, new(value), buffer ?? batch.GetBuffer(), headers, timestamp, partition);
 
     public static Task<DeliveryResult> ProduceAsync(
         this IProducer producer,
@@ -138,11 +138,11 @@ public static class ProtoValueBufferExtensions
         this MessageBatch batch,
         long key,
         IMessage value,
-        IBuffer<byte> buffer,
+        IBuffer<byte>? buffer = null,
         Headers? headers = null,
         Timestamp timestamp = default,
         Partition? partition = null)
-        => batch.Produce<LongValue, ProtoValue>(key, new(value), buffer, headers, timestamp, partition);
+        => batch.Produce<LongValue, ProtoValue>(key, new(value), buffer ?? batch.GetBuffer(), headers, timestamp, partition);
 
     public static Task<DeliveryResult> ProduceAsync(
         this IProducer producer,
@@ -194,7 +194,7 @@ public static class ProtoValueBufferExtensions
         this MessageBatch batch,
         string? key,
         IMessage value,
-        IBuffer<byte> buffer,
+        IBuffer<byte>? buffer,
         Headers? headers = null,
         Timestamp timestamp = default,
         Partition? partition = null,
@@ -202,7 +202,7 @@ public static class ProtoValueBufferExtensions
         => batch.Produce<StringValue, ProtoValue>(
             keyEncoding == null ? new(key) : new(key, keyEncoding),
             new(value),
-            buffer,
+            buffer ?? batch.GetBuffer(),
             headers,
             timestamp,
             partition);
@@ -238,9 +238,9 @@ public static class ProtoValueBufferExtensions
         this MessageBatch batch,
         Guid key,
         IMessage value,
-        IBuffer<byte> buffer,
+        IBuffer<byte>? buffer = null,
         Headers? headers = null,
         Timestamp timestamp = default,
         Partition? partition = null)
-        => batch.Produce<GuidValue, ProtoValue>(key, new(value), buffer, headers, timestamp, partition);
+        => batch.Produce<GuidValue, ProtoValue>(key, new(value), buffer ?? batch.GetBuffer(), headers, timestamp, partition);
 }

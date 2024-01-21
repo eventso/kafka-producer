@@ -25,6 +25,7 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
 {
     public partial class Tests
     {
+#pragma warning disable xUnit1031
         [Theory, MemberData(nameof(KafkaParameters))]
         public void Producer_Binary_Handles(string bootstrapServers)
         {
@@ -37,6 +38,7 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
             {
                 using (var producer = new ProducerBuilder(producerConfig).Build())
                 {
+
                     var r1 = producer.ProduceAsync(topic.Name, new ReadOnlySpan<byte>(new byte[] { 42 }), new ReadOnlySpan<byte>(new byte[] { 33 })).Result;
                     Assert.Equal(0, r1.Offset);
 
@@ -101,5 +103,6 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
             Assert.Equal(0, Library.HandleCount);
             LogToFile("end   Producer_Binary_Handles");
         }
+#pragma warning restore xUnit1031
     }
 }
