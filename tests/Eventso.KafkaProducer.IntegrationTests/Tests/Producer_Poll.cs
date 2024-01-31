@@ -29,8 +29,6 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
         [Theory, MemberData(nameof(KafkaProducersParameters))]
         public async Task Producer_Poll(string bootstrapServers, TestProducerType producerType)
         {
-            LogToFile("start Producer_Poll");
-
             using (var tempTopic = new TemporaryTopic(bootstrapServers, 1))
             using (var producer = new TestProducerBuilder<Null, string>(new ProducerConfig { BootstrapServers = bootstrapServers }, producerType).Build())
             {
@@ -59,7 +57,6 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
             }
 
             Assert.Equal(0, Library.HandleCount);
-            LogToFile("end   Producer_Poll");
         }
     }
 }

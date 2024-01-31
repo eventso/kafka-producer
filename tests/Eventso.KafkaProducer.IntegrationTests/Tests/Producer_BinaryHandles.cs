@@ -29,8 +29,6 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
         [Theory, MemberData(nameof(KafkaParameters))]
         public void Producer_Binary_Handles(string bootstrapServers)
         {
-            LogToFile("start Producer_Binary_Handles");
-
             var producerConfig = new ProducerConfig { BootstrapServers = bootstrapServers };
             const int nativeLength = 12;
 
@@ -101,7 +99,6 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
             }
 
             Assert.Equal(0, Library.HandleCount);
-            LogToFile("end   Producer_Binary_Handles");
         }
 #pragma warning restore xUnit1031
     }

@@ -1,24 +1,5 @@
-// Copyright 2018 Confluent Inc.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-// Refer to LICENSE for more information.
-
 #pragma warning disable xUnit1026
 
-using System.Buffers.Binary;
-using System.Reflection.PortableExecutable;
-using System.Runtime.InteropServices;
 using Confluent.Kafka;
 using Xunit;
 
@@ -33,8 +14,6 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
         [Theory, MemberData(nameof(KafkaParameters))]
         public async Task Producer_Binary_ShortKey(string bootstrapServers)
         {
-            LogToFile("start Producer_Binary_ShortKey");
-
             var producerConfig = new ProducerConfig { BootstrapServers = bootstrapServers };
             const short key1 = 25678;
             const short key2 = -25678;
@@ -78,14 +57,11 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
             }
 
             Assert.Equal(0, Library.HandleCount);
-            LogToFile("end   Producer_Binary_ShortKey");
         }
 
         [Theory, MemberData(nameof(KafkaParameters))]
         public async Task Producer_Binary_IntKey(string bootstrapServers)
         {
-            LogToFile("start Producer_Binary_IntKey");
-
             var producerConfig = new ProducerConfig { BootstrapServers = bootstrapServers };
             const int key1 = 256780;
             const int key2 = -256780;
@@ -127,14 +103,11 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
             }
 
             Assert.Equal(0, Library.HandleCount);
-            LogToFile("end   Producer_Binary_IntKey");
         }
 
         [Theory, MemberData(nameof(KafkaParameters))]
         public async Task Producer_Binary_LongKey(string bootstrapServers)
         {
-            LogToFile("start Producer_Binary_LongKey");
-
             var producerConfig = new ProducerConfig { BootstrapServers = bootstrapServers };
             const long key1 = 25678000000;
             const long key2 = -25678000000;
@@ -176,14 +149,11 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
             }
 
             Assert.Equal(0, Library.HandleCount);
-            LogToFile("end   Producer_Binary_LongKey");
         }
 
         [Theory, MemberData(nameof(KafkaParameters))]
         public async Task Producer_Binary_StringKey(string bootstrapServers)
         {
-            LogToFile("start Producer_Binary_StringKey");
-
             var producerConfig = new ProducerConfig { BootstrapServers = bootstrapServers };
             string key1 = Guid.NewGuid().ToString();
             string key2 = "QWERTYUIO#";
@@ -235,14 +205,11 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
             }
 
             Assert.Equal(0, Library.HandleCount);
-            LogToFile("end   Producer_Binary_StringKey");
         }
 
         [Theory, MemberData(nameof(KafkaParameters))]
         public async Task Producer_Binary_GuidKey(string bootstrapServers)
         {
-            LogToFile("start Producer_Binary_StringKey");
-
             var producerConfig = new ProducerConfig { BootstrapServers = bootstrapServers };
             var key1 = Guid.NewGuid();
             var key2 = Guid.Empty;
@@ -288,7 +255,6 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
 
 
             Assert.Equal(0, Library.HandleCount);
-            LogToFile("end   Producer_Binary_GuidKey");
         }
     }
 }

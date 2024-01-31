@@ -30,8 +30,6 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
         [Theory, MemberData(nameof(KafkaProducersParameters))]
         public void Producer_ProduceAsync_HighConcurrency(string bootstrapServers, TestProducerType producerType)
         {
-            LogToFile("start Producer_ProduceAsync_HighConcurrency");
-
             ThreadPool.GetMaxThreads(out int originalWorkerThreads, out int originalCompletionPortThreads);
 
             ThreadPool.GetMinThreads(out int workerThreads, out int completionPortThreads);   
@@ -69,7 +67,6 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
             ThreadPool.SetMaxThreads(originalWorkerThreads, originalCompletionPortThreads);
 
             Assert.Equal(0, Library.HandleCount);
-            LogToFile("end   Producer_ProduceAsync_HighConcurrency");
         }
     }
 }

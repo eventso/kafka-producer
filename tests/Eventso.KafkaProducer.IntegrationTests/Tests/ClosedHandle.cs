@@ -30,8 +30,6 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
         [Theory, MemberData(nameof(KafkaProducersParameters))]
         public void Producer_ClosedHandle(string bootstrapServers, TestProducerType producerType)
         {
-            LogToFile("start Producer_ClosedHandle");
-
             var producerConfig = new ProducerConfig
             {
                 BootstrapServers = bootstrapServers,
@@ -43,7 +41,6 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
             Assert.Throws<ObjectDisposedException>(() => producer.Poll(TimeSpan.FromMilliseconds(10)));
 
             Assert.Equal(0, Library.HandleCount);
-            LogToFile("end   Producer_ClosedHandle");
         }
     }
 }

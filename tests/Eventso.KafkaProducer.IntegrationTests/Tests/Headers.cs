@@ -29,8 +29,6 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
         [Theory, MemberData(nameof(KafkaProducersParameters))]
         public async Task MessageHeaderProduceConsume(string bootstrapServers, TestProducerType producerType)
         {
-            LogToFile("start MessageHeaderProduceConsume");
-
             var producerConfig = new ProducerConfig
             {
                 BootstrapServers = bootstrapServers,
@@ -322,7 +320,6 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
             }
 
             Assert.Equal(0, Library.HandleCount);
-            LogToFile("end   MessageHeaderProduceConsume");
         }
     }
 }

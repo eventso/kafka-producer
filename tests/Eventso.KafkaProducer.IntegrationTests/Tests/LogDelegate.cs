@@ -29,8 +29,6 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
         [Theory, MemberData(nameof(KafkaParameters))]
         public async Task LogDelegate(string bootstrapServers)
         {
-            LogToFile("start LogDelegate");
-
             var logCount = 0;
 
             var consumerConfig = new ConsumerConfig
@@ -96,7 +94,6 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
             Assert.True(logCount > 0);
 
             Assert.Equal(0, Library.HandleCount);
-            LogToFile("end   LogDelegate");
         }
 
     }

@@ -1,6 +1,4 @@
 ﻿using Confluent.Kafka;
-using Google.Protobuf;
-using Tests;
 
 namespace Eventso.KafkaProducer.IntegrationTests
 {

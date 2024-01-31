@@ -29,8 +29,6 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
         [Theory, MemberData(nameof(KafkaProducersParameters))]
         public void Producer_CustomPartitioner(string bootstrapServers, TestProducerType producerType)
         {
-            LogToFile("start Producer_CustomPartitioner");
-
             const int PARTITION_COUNT = 42;
 
             var producerConfig = new ProducerConfig
@@ -138,7 +136,6 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
             }
 
             Assert.Equal(0, Library.HandleCount);
-            LogToFile("end   Producer_CustomPartitioner");
         }
 
     }

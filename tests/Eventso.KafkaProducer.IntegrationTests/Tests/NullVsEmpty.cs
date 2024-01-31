@@ -30,8 +30,6 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
         [Theory, MemberData(nameof(KafkaProducersParameters))]
         public async Task NullVsEmpty(string bootstrapServers, TestProducerType producerType)
         {
-            LogToFile("start NullVsEmpty");
-
             var consumerConfig = new ConsumerConfig
             {
                 GroupId = Guid.NewGuid().ToString(),
@@ -77,7 +75,6 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
             }
 
             Assert.Equal(0, Library.HandleCount);
-            LogToFile("end   NullVsEmpty");
         }
 
     }

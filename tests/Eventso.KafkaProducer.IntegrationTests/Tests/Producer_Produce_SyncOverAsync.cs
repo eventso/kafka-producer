@@ -31,8 +31,6 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
         [Theory(Skip = "don't work"), MemberData(nameof(KafkaProducersParameters))]
         public void Producer_Produce_SyncOverAsync(string bootstrapServers, TestProducerType producerType)
         {
-            LogToFile("start Producer_Produce_SyncOverAsync");
-
             ThreadPool.GetMaxThreads(out int originalWorkerThreads, out int originalCompletionPortThreads);
 
             ThreadPool.GetMinThreads(out int workerThreads, out int completionPortThreads);   
@@ -90,7 +88,6 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
             ThreadPool.SetMaxThreads(originalWorkerThreads, originalCompletionPortThreads);
 
             Assert.Equal(0, Library.HandleCount);
-            LogToFile("end   Producer_Produce_SyncOverAsync");
         }
     }
 }

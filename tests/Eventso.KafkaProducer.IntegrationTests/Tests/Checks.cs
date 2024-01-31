@@ -27,4 +27,15 @@ public class Checks
 
         h2Restored.Target.Should().BeSameAs(obj);
     }
+
+    [Fact]
+    public void StackAlloc_Zero()
+    {
+        int bytes = 0;
+        Span<byte> span = stackalloc byte[bytes];
+
+        var eq = span == Span<byte>.Empty;
+
+        eq.Should().BeTrue();
+    }
 }

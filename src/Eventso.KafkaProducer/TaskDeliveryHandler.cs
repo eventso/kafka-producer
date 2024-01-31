@@ -5,36 +5,33 @@ namespace Eventso.KafkaProducer;
 internal sealed class TaskDeliveryHandler : TaskCompletionSource<DeliveryResult>, IDeliveryHandler
 {
     private readonly string topic;
-    public CancellationTokenRegistration CancellationTokenRegistration;
+    private readonly CancellationTokenRegistration cancellationTokenRegistration;
 
-    public TaskDeliveryHandler(string topic)
+    public TaskDeliveryHandler(string topic, CancellationToken token)
         : base(TaskCreationOptions.RunContinuationsAsynchronously)
     {
         this.topic = topic;
+
+        if (token.CanBeCanceled)
+            cancellationTokenRegistration = token.UnsafeRegister(arg => ((TaskDeliveryHandler)arg!).TrySetCanceled(), this);
     }
 
     public void HandleDeliveryReport(DeliveryReport<Null, Null>? deliveryReport)
     {
-        CancellationTokenRegistration.Dispose();
+        cancellationTokenRegistration.Dispose();
 
         if (deliveryReport == null)
         {
-            TrySetResult(new DeliveryResult());
+            TrySetResult(new DeliveryResult(new DeliveryResult<Null, Null>(), topic));
             return;
         }
 
-        var dr = new DeliveryResult
-        {
-            TopicPartitionOffset = deliveryReport.TopicPartitionOffset,
-            Status = deliveryReport.Status,
-            Timestamp = deliveryReport.Message.Timestamp,
-            Headers = deliveryReport.Message.Headers,
-            Topic = topic
-        };
-
         if (deliveryReport.Error.IsError)
-            TrySetException(new ProduceException(deliveryReport.Error, dr));
+            TrySetException(new ProduceException(
+                deliveryReport.Error,
+                new(topic, deliveryReport.Partition, deliveryReport.Offset),
+                deliveryReport.Status));
         else
-            TrySetResult(dr);
+            TrySetResult(new DeliveryResult(deliveryReport, topic));
     }
 }

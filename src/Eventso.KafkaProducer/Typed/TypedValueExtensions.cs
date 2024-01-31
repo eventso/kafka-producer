@@ -1,4 +1,5 @@
 ﻿using System.Buffers;
+using System.Runtime.CompilerServices;
 using CommunityToolkit.HighPerformance.Buffers;
 using Confluent.Kafka;
 
@@ -8,6 +9,7 @@ public static class TypedValueExtensions
 {
     private const int StackThreshold = 256;
 
+    [SkipLocalsInit]
     public static Task<DeliveryResult> ProduceAsync<TValue>(
         this IProducer producer,
         string topic,
@@ -19,10 +21,11 @@ public static class TypedValueExtensions
         Partition? partition = null)
         where TValue : IBinarySerializable
     {
-        var valueStackThreshold = StackThreshold;
         var valueSize = value.GetSize();
-        var valueBytesPooled = valueSize <= valueStackThreshold ? null : ArrayPool<byte>.Shared.Rent(valueSize);
-        var valueBytes = valueSize == 0 ? Span<byte>.Empty : valueBytesPooled ?? stackalloc byte[valueSize];
+        byte[]? valueBytesPooled = null;
+        var valueBytes = valueSize <= StackThreshold
+            ? stackalloc byte[valueSize]
+            : valueBytesPooled = ArrayPool<byte>.Shared.Rent(valueSize);
 
         try
         {
@@ -44,6 +47,7 @@ public static class TypedValueExtensions
         }
     }
 
+    [SkipLocalsInit]
     public static void Produce<TValue>(
         this IProducer producer,
         string topic,
@@ -55,10 +59,11 @@ public static class TypedValueExtensions
         Partition? partition = null)
         where TValue : IBinarySerializable
     {
-        var valueStackThreshold = StackThreshold;
         var valueSize = value.GetSize();
-        var valueBytesPooled = valueSize <= valueStackThreshold ? null : ArrayPool<byte>.Shared.Rent(valueSize);
-        var valueBytes = valueSize == 0 ? Span<byte>.Empty : valueBytesPooled ?? stackalloc byte[valueSize];
+        byte[]? valueBytesPooled = null;
+        var valueBytes = valueSize <= StackThreshold
+            ? stackalloc byte[valueSize]
+            : valueBytesPooled = ArrayPool<byte>.Shared.Rent(valueSize);
 
         try
         {
@@ -80,6 +85,7 @@ public static class TypedValueExtensions
         }
     }
 
+    [SkipLocalsInit]
     public static void Produce<TValue>(
         this MessageBatch batch,
         ReadOnlySpan<byte> key,
@@ -89,10 +95,11 @@ public static class TypedValueExtensions
         Partition? partition = null)
         where TValue : IBinarySerializable
     {
-        var valueStackThreshold = StackThreshold;
         var valueSize = value.GetSize();
-        var valueBytesPooled = valueSize <= valueStackThreshold ? null : ArrayPool<byte>.Shared.Rent(valueSize);
-        var valueBytes = valueSize == 0 ? Span<byte>.Empty : valueBytesPooled ?? stackalloc byte[valueSize];
+        byte[]? valueBytesPooled = null;
+        var valueBytes = valueSize <= StackThreshold
+            ? stackalloc byte[valueSize]
+            : valueBytesPooled = ArrayPool<byte>.Shared.Rent(valueSize);
 
         try
         {

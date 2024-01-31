@@ -29,8 +29,6 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
         [Theory, MemberData(nameof(KafkaProducersParameters))]
         public void Producer_Produce_Null(string bootstrapServers, TestProducerType producerType)
         {
-            LogToFile("start Producer_Produce_Null");
-
             var producerConfig = new ProducerConfig { BootstrapServers = bootstrapServers };
 
 
@@ -88,7 +86,6 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
             Assert.Equal(2, count);
 
             Assert.Equal(0, Library.HandleCount);
-            LogToFile("end   Producer_Produce_Null");
         }
     }
 }

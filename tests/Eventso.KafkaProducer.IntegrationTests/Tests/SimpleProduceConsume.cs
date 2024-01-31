@@ -31,8 +31,6 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
         [Theory, MemberData(nameof(KafkaProducersParameters))]
         public void SimpleProduceConsume(string bootstrapServers, TestProducerType producerType)
         {
-            LogToFile("start SimpleProduceConsume");
-
             var producerConfig = new ProducerConfig
             {
                 BootstrapServers = bootstrapServers
@@ -63,7 +61,6 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
             }
             
             Assert.Equal(0, Library.HandleCount);
-            LogToFile("end   SimpleProduceConsume");
         }
 
         private static void ConsumeMessage(IConsumer<byte[], byte[]> consumer, DeliveryResult<Null, string?> dr, string? testString)

@@ -29,8 +29,6 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
         [Theory, MemberData(nameof(KafkaParameters))]
         public void Producer_ProduceAsync_Error(string bootstrapServers)
         {
-            LogToFile("start Producer_ProduceAsync_Error");
-
             var producerConfig = new ProducerConfig { BootstrapServers = bootstrapServers };
 
 
@@ -104,14 +102,11 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
             }
 
             Assert.Equal(0, Library.HandleCount);
-            LogToFile("end   Producer_ProduceAsync_Error");
         }
 
         [Theory, MemberData(nameof(KafkaParameters))]
         public void Producer_Binary_ProduceAsync_Error(string bootstrapServers)
         {
-            LogToFile("start Producer_Binary_ProduceAsync_Error");
-
             var producerConfig = new ProducerConfig { BootstrapServers = bootstrapServers };
 
 
@@ -137,15 +132,15 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
             {
                 var inner = e.InnerException;
                 Assert.IsType<ProduceException>(inner);
-                var dr = ((ProduceException)inner).DeliveryResult;
+                var exception = ((ProduceException)inner);
                 var err = ((ProduceException)inner).Error;
 
                 Assert.True(err.IsError);
-                Assert.Equal(PersistenceStatus.NotPersisted, dr.Status);
+                Assert.Equal(PersistenceStatus.NotPersisted, exception.Status);
                 Assert.False(err.IsFatal);
-                Assert.Equal(partitionedTopic, dr.Topic);
-                Assert.Equal(Offset.Unset, dr.Offset);
-                Assert.True(dr.Partition == 42);
+                Assert.Equal(partitionedTopic, exception.TopicPartitionOffset.Topic);
+                Assert.Equal(Offset.Unset, exception.TopicPartitionOffset.Offset);
+                Assert.True(exception.TopicPartitionOffset.Partition == 42);
             }
 
             // byte[] case
@@ -169,7 +164,7 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
             {
                 var inner = e.InnerException;
                 Assert.IsType<ProduceException>(inner);
-                var dr = ((ProduceException)inner).DeliveryResult;
+                var dr = ((ProduceException)inner).TopicPartitionOffset;
                 var err = ((ProduceException)inner).Error;
 
                 Assert.True(err.IsError);
@@ -180,7 +175,6 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
             }
 
             Assert.Equal(0, Library.HandleCount);
-            LogToFile("end   Producer_Binary_ProduceAsync_Error");
         }
     }
 }

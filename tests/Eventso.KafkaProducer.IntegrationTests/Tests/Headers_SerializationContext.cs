@@ -51,8 +51,6 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
         [Theory, MemberData(nameof(KafkaProducersParameters))]
         public void HeadersSerializationContext(string bootstrapServers, TestProducerType producerType)
         {
-            LogToFile("start Headers_SerializationContext");
-
             var producerConfig = new ProducerConfig
             {
                 BootstrapServers = bootstrapServers,
@@ -109,7 +107,6 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
             }
 
             Assert.Equal(0, Library.HandleCount);
-            LogToFile("end   Headers_SerializationContext");
         }
     }
 }

@@ -15,7 +15,6 @@
 // Refer to LICENSE for more information.
 
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using Confluent.Kafka;
 using Confluent.Kafka.Admin;
 using Newtonsoft.Json.Linq;
@@ -25,7 +24,7 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
 {
     public class GlobalFixture : IDisposable
     {
-        private string bootstrapServers;
+        public string bootstrapServers;
 
         public const int partitionedTopicNumPartitions = 2;
 
@@ -43,7 +42,8 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
             // Create shared topics that are used by many of the tests.
             using (var adminClient = new AdminClientBuilder(new AdminClientConfig { BootstrapServers = bootstrapServers }).Build())
             {
-                adminClient.CreateTopicsAsync(new List<TopicSpecification> {
+                adminClient.CreateTopicsAsync(new List<TopicSpecification>
+                {
                     new TopicSpecification { Name = SinglePartitionTopic, NumPartitions = 1, ReplicationFactor = 1 },
                     new TopicSpecification { Name = PartitionedTopic, NumPartitions = partitionedTopicNumPartitions, ReplicationFactor = 1 }
                 }).Wait();
@@ -78,36 +78,10 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
         private string singlePartitionTopic;
         private string partitionedTopic;
 
-        public const int partitionedTopicNumPartitions = GlobalFixture.partitionedTopicNumPartitions;
-
         private static List<object[]> kafkaParameters = null!;
-        private static List<object[]>? oAuthBearerKafkaParameters;
-
-        private object logLockObj = new object();
-        private void LogToFile(string msg)
-        {
-            lock (logLockObj)
-            {
-                // Uncomment to enable logging to a file. Useful for debugging,
-                // for example, which test caused librdkafka to segfault.
-                // File.AppendAllLines("/tmp/test.txt", new [] { msg });
-            }
-        }
-
-        private void LogToFileStartTest([CallerMemberName] string? callerMemberName = null)
-            => LogToFile($"start {callerMemberName}");
-
-        private void LogToFileEndTest([CallerMemberName] string? callerMemberName = null)
-            => LogToFile($"end   {callerMemberName}");
 
         public Tests(GlobalFixture globalFixture)
         {
-            // Quick fix for https://github.com/Microsoft/vstest/issues/918
-            // Some tests will log using ConsoleLogger which print to standard Err by default, bugged on vstest
-            // If we have error in test, they may hang
-            // Write to standard output solve the issue
-            Console.SetError(Console.Out);
-
             singlePartitionTopic = globalFixture.SinglePartitionTopic;
             partitionedTopic = globalFixture.PartitionedTopic;
         }
@@ -122,9 +96,10 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
                 var json = JObject.Parse(File.ReadAllText(jsonPath));
                 kafkaParameters = new List<object[]>
                 {
-                    new object[] {json["bootstrapServers"]!.ToString()}
+                    new object[] { json["bootstrapServers"]!.ToString() }
                 };
             }
+
             return kafkaParameters;
         }
 
@@ -135,30 +110,6 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
                 yield return kafkaParameter.Append(TestProducerType.KeyValue).ToArray();
                 yield return kafkaParameter.Append(TestProducerType.Binary).ToArray();
             }
-        }
-
-        public static IEnumerable<object[]> OAuthBearerKafkaParameters()
-        {
-            if (oAuthBearerKafkaParameters == null)
-            {
-                var assemblyPath = typeof(Tests).GetTypeInfo().Assembly.Location;
-                var assemblyDirectory = Path.GetDirectoryName(assemblyPath);
-                var jsonPath = Path.Combine(assemblyDirectory!, "testconf.json");
-                var json = JObject.Parse(File.ReadAllText(jsonPath));
-                oAuthBearerKafkaParameters = new List<object[]>
-                {
-                    new object[] {json["oauthbearerBootstrapServers"]!.ToString()}
-                };
-            }
-            return oAuthBearerKafkaParameters;
-        }
-        public static bool semaphoreSkipFlakyTests(){
-            string? onSemaphore = Environment.GetEnvironmentVariable("SEMAPHORE_SKIP_FLAKY_TETSTS");
-            if (onSemaphore != null)
-            {
-                return true;
-            }
-            return false;
         }
     }
 }

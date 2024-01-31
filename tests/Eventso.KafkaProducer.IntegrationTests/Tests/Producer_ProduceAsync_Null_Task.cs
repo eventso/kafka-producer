@@ -31,8 +31,6 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
         [Theory, MemberData(nameof(KafkaProducersParameters))]
         public void Producer_ProduceAsync_Null_Task(string bootstrapServers, TestProducerType producerType)
         {
-            LogToFile("start Producer_ProduceAsync_Null_Task");
-
             var producerConfig = new ProducerConfig { BootstrapServers = bootstrapServers };
 
 
@@ -88,7 +86,6 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
             
 
             Assert.Equal(0, Library.HandleCount);
-            LogToFile("end   Producer_ProduceAsync_Null_Task");
         }
 
     }

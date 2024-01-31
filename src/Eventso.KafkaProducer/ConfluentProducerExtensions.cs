@@ -22,13 +22,14 @@ public static class ConfluentProducerExtensions
         Timestamp timestamp = default,
         Partition? partition = null)
     {
+
+        if (cancellationToken.IsCancellationRequested)
+            return Task.FromCanceled<DeliveryResult>(cancellationToken);
+
         try
         {
-            var handler = new TaskDeliveryHandler(topic);
-
-            if (cancellationToken.CanBeCanceled)
-                handler.CancellationTokenRegistration = cancellationToken.Register(() => handler.TrySetCanceled());
-
+            var handler = new TaskDeliveryHandler(topic, cancellationToken);
+            
             BinaryProducer.Produce(
                 producer.Handle.LibrdkafkaHandle,
                 topic,
@@ -45,10 +46,7 @@ public static class ConfluentProducerExtensions
         {
             throw new ProduceException(
                 ex.Error,
-                new DeliveryResult
-                {
-                    TopicPartitionOffset = new TopicPartitionOffset(new(topic, partition ?? Partition.Any), Offset.Unset)
-                });
+                new(topic, partition ?? Partition.Any, Offset.Unset));
         }
     }
 
@@ -80,10 +78,7 @@ public static class ConfluentProducerExtensions
         {
             throw new ProduceException(
                 ex.Error,
-                new DeliveryReport
-                {
-                    TopicPartitionOffset = new TopicPartitionOffset(new(topic, partition ?? Partition.Any), Offset.Unset)
-                });
+                new(topic, partition ?? Partition.Any, Offset.Unset));
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Buffers;
+using System.Runtime.CompilerServices;
 using CommunityToolkit.HighPerformance.Buffers;
 using Confluent.Kafka;
 
@@ -8,6 +9,7 @@ public static class TypedExtensions
 {
     private const int StackThreshold = 256;
 
+    [SkipLocalsInit]
     public static Task<DeliveryResult> ProduceAsync<TKey, TValue>(
         this IProducer producer,
         string topic,
@@ -21,13 +23,14 @@ public static class TypedExtensions
         where TValue : IBinarySerializable
     {
         var keySize = key.GetSize();
-        var keyBytesPooled = keySize <= StackThreshold ? null : ArrayPool<byte>.Shared.Rent(keySize);
-        var keyBytes = keySize == 0 ? Span<byte>.Empty : keyBytesPooled ?? stackalloc byte[keySize];
+        byte[]? keyBytesPooled = null;
+        var keyBytes = keySize <= StackThreshold ? stackalloc byte[keySize] : keyBytesPooled = ArrayPool<byte>.Shared.Rent(keySize);
 
-        var valueStackThreshold = StackThreshold + StackThreshold - keySize;
         var valueSize = value.GetSize();
-        var valueBytesPooled = valueSize <= valueStackThreshold ? null : ArrayPool<byte>.Shared.Rent(valueSize);
-        var valueBytes = valueSize == 0 ? Span<byte>.Empty : valueBytesPooled ?? stackalloc byte[valueSize];
+        byte[]? valueBytesPooled = null;
+        var valueBytes = valueSize <= StackThreshold + StackThreshold - keySize
+            ? stackalloc byte[valueSize]
+            : valueBytesPooled = ArrayPool<byte>.Shared.Rent(valueSize);
 
         try
         {
@@ -53,6 +56,7 @@ public static class TypedExtensions
         }
     }
 
+    [SkipLocalsInit]
     public static void Produce<TKey, TValue>(
         this IProducer producer,
         string topic,
@@ -66,13 +70,14 @@ public static class TypedExtensions
         where TValue : IBinarySerializable
     {
         var keySize = key.GetSize();
-        var keyBytesPooled = keySize <= StackThreshold ? null : ArrayPool<byte>.Shared.Rent(keySize);
-        var keyBytes = keySize == 0 ? Span<byte>.Empty : keyBytesPooled ?? stackalloc byte[keySize];
+        byte[]? keyBytesPooled = null;
+        var keyBytes = keySize <= StackThreshold ? stackalloc byte[keySize] : keyBytesPooled = ArrayPool<byte>.Shared.Rent(keySize);
 
-        var valueStackThreshold = StackThreshold + StackThreshold - keySize;
         var valueSize = value.GetSize();
-        var valueBytesPooled = valueSize <= valueStackThreshold ? null : ArrayPool<byte>.Shared.Rent(valueSize);
-        var valueBytes = valueSize == 0 ? Span<byte>.Empty : valueBytesPooled ?? stackalloc byte[valueSize];
+        byte[]? valueBytesPooled = null;
+        var valueBytes = valueSize <= StackThreshold + StackThreshold - keySize
+            ? stackalloc byte[valueSize]
+            : valueBytesPooled = ArrayPool<byte>.Shared.Rent(valueSize);
 
         try
         {
@@ -98,6 +103,7 @@ public static class TypedExtensions
         }
     }
 
+    [SkipLocalsInit]
     public static void Produce<TKey, TValue>(
         this MessageBatch batch,
         in TKey key,
@@ -109,13 +115,14 @@ public static class TypedExtensions
         where TValue : IBinarySerializable
     {
         var keySize = key.GetSize();
-        var keyBytesPooled = keySize <= StackThreshold ? null : ArrayPool<byte>.Shared.Rent(keySize);
-        var keyBytes = keySize == 0 ? Span<byte>.Empty : keyBytesPooled ?? stackalloc byte[keySize];
+        byte[]? keyBytesPooled = null;
+        var keyBytes = keySize <= StackThreshold ? stackalloc byte[keySize] : keyBytesPooled = ArrayPool<byte>.Shared.Rent(keySize);
 
-        var valueStackThreshold = StackThreshold + StackThreshold - keySize;
         var valueSize = value.GetSize();
-        var valueBytesPooled = valueSize <= valueStackThreshold ? null : ArrayPool<byte>.Shared.Rent(valueSize);
-        var valueBytes = valueSize == 0 ? Span<byte>.Empty : valueBytesPooled ?? stackalloc byte[valueSize];
+        byte[]? valueBytesPooled = null;
+        var valueBytes = valueSize <= StackThreshold + StackThreshold - keySize
+            ? stackalloc byte[valueSize]
+            : valueBytesPooled = ArrayPool<byte>.Shared.Rent(valueSize);
 
         try
         {
@@ -139,7 +146,7 @@ public static class TypedExtensions
         }
     }
 
-
+    [SkipLocalsInit]
     public static Task<DeliveryResult> ProduceAsync<TKey, TValue>(
         this IProducer producer,
         string topic,
@@ -154,8 +161,8 @@ public static class TypedExtensions
         where TValue : IBinaryBufferWritable
     {
         var keySize = key.GetSize();
-        var keyBytesPooled = keySize <= StackThreshold ? null : ArrayPool<byte>.Shared.Rent(keySize);
-        var keyBytes = keySize == 0 ? Span<byte>.Empty : keyBytesPooled ?? stackalloc byte[keySize];
+        byte[]? keyBytesPooled = null;
+        var keyBytes = keySize <= StackThreshold ? stackalloc byte[keySize] : keyBytesPooled = ArrayPool<byte>.Shared.Rent(keySize);
 
         try
         {
@@ -180,6 +187,7 @@ public static class TypedExtensions
         }
     }
 
+    [SkipLocalsInit]
     public static void Produce<TKey, TValue>(
         this IProducer producer,
         string topic,
@@ -194,8 +202,8 @@ public static class TypedExtensions
         where TValue : IBinaryBufferWritable
     {
         var keySize = key.GetSize();
-        var keyBytesPooled = keySize <= StackThreshold ? null : ArrayPool<byte>.Shared.Rent(keySize);
-        var keyBytes = keySize == 0 ? Span<byte>.Empty : keyBytesPooled ?? stackalloc byte[keySize];
+        byte[]? keyBytesPooled = null;
+        var keyBytes = keySize <= StackThreshold ? stackalloc byte[keySize] : keyBytesPooled = ArrayPool<byte>.Shared.Rent(keySize);
 
         try
         {
@@ -220,6 +228,7 @@ public static class TypedExtensions
         }
     }
 
+    [SkipLocalsInit]
     public static void Produce<TKey, TValue>(
         this MessageBatch batch,
         in TKey key,
@@ -232,8 +241,8 @@ public static class TypedExtensions
         where TValue : IBinaryBufferWritable
     {
         var keySize = key.GetSize();
-        var keyBytesPooled = keySize <= StackThreshold ? null : ArrayPool<byte>.Shared.Rent(keySize);
-        var keyBytes = keySize == 0 ? Span<byte>.Empty : keyBytesPooled ?? stackalloc byte[keySize];
+        byte[]? keyBytesPooled = null;
+        var keyBytes = keySize <= StackThreshold ? stackalloc byte[keySize] : keyBytesPooled = ArrayPool<byte>.Shared.Rent(keySize);
 
         try
         {

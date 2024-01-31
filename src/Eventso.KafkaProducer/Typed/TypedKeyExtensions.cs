@@ -1,4 +1,5 @@
 ﻿using System.Buffers;
+using System.Runtime.CompilerServices;
 using System.Text;
 using Confluent.Kafka;
 
@@ -196,6 +197,7 @@ public static class TypedKeyExtensions
         Partition? partition = null)
         => batch.Produce<GuidValue>(key, value, headers, timestamp, partition);
 
+    [SkipLocalsInit]
     private static Task<DeliveryResult> ProduceAsync<TKey>(
         this IProducer producer,
         string topic,
@@ -208,14 +210,14 @@ public static class TypedKeyExtensions
         where TKey : IBinarySerializable
     {
         var keySize = key.GetSize();
-        var keyBytesPooled = keySize <= StackThreshold ? null : ArrayPool<byte>.Shared.Rent(keySize);
-        var keyBytes = keySize == 0 ? Span<byte>.Empty : keyBytesPooled ?? stackalloc byte[keySize];
+        byte[]? keyBytesPooled = null;
+        var keyBytes = keySize <= StackThreshold ? stackalloc byte[keySize] : keyBytesPooled = ArrayPool<byte>.Shared.Rent(keySize);
 
         try
         {
             var bytesWritten = key.WriteBytes(keyBytes);
 
-            return producer.ProduceAsync(topic, keyBytes.Slice(0, bytesWritten), value, cancellationToken, headers, timestamp, partition);
+            return producer.ProduceAsync(topic, keyBytes[..bytesWritten], value, cancellationToken, headers, timestamp, partition);
         }
         finally
         {
@@ -224,6 +226,7 @@ public static class TypedKeyExtensions
         }
     }
 
+    [SkipLocalsInit]
     private static void Produce<TKey>(
         this IProducer producer,
         string topic,
@@ -236,14 +239,14 @@ public static class TypedKeyExtensions
         where TKey : IBinarySerializable
     {
         var keySize = key.GetSize();
-        var keyBytesPooled = keySize <= StackThreshold ? null : ArrayPool<byte>.Shared.Rent(keySize);
-        var keyBytes = keySize == 0 ? Span<byte>.Empty : keyBytesPooled ?? stackalloc byte[keySize];
+        byte[]? keyBytesPooled = null;
+        var keyBytes = keySize <= StackThreshold ? stackalloc byte[keySize] : keyBytesPooled = ArrayPool<byte>.Shared.Rent(keySize);
 
         try
         {
             var bytesWritten = key.WriteBytes(keyBytes);
 
-            producer.Produce(topic, keyBytes.Slice(0, bytesWritten), value, headers, timestamp, deliveryHandler, partition);
+            producer.Produce(topic, keyBytes[..bytesWritten], value, headers, timestamp, deliveryHandler, partition);
         }
         finally
         {
@@ -252,6 +255,7 @@ public static class TypedKeyExtensions
         }
     }
 
+    [SkipLocalsInit]
     private static void Produce<TKey>(
         this MessageBatch batch,
         TKey key,
@@ -262,14 +266,14 @@ public static class TypedKeyExtensions
         where TKey : IBinarySerializable
     {
         var keySize = key.GetSize();
-        var keyBytesPooled = keySize <= StackThreshold ? null : ArrayPool<byte>.Shared.Rent(keySize);
-        var keyBytes = keySize == 0 ? Span<byte>.Empty : keyBytesPooled ?? stackalloc byte[keySize];
+        byte[]? keyBytesPooled = null;
+        var keyBytes = keySize <= StackThreshold ? stackalloc byte[keySize] : keyBytesPooled = ArrayPool<byte>.Shared.Rent(keySize);
 
         try
         {
             var bytesWritten = key.WriteBytes(keyBytes);
 
-            batch.Produce(keyBytes.Slice(0, bytesWritten), value, headers, timestamp, partition);
+            batch.Produce(keyBytes[..bytesWritten], value, headers, timestamp, partition);
         }
         finally
         {

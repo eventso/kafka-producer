@@ -29,8 +29,6 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
         [Theory, MemberData(nameof(KafkaParameters))]
         public async void Producer_OptimizeDeliveryReports(string bootstrapServers)
         {
-            LogToFile("start Producer_OptimizeDeliveryReports");
-
             byte[] TestKey = new byte[] { 1, 2, 3, 4 };
             byte[] TestValue = new byte[] { 5, 6, 7, 8 };
 
@@ -83,7 +81,6 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
             }
 
             Assert.Equal(0, Library.HandleCount);
-            LogToFile("end   Producer_OptimizeDeliveryReports");
         }
     }
 }

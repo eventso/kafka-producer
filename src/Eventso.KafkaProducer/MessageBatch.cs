@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using CommunityToolkit.HighPerformance.Buffers;
 using Confluent.Kafka;
 using Confluent.Kafka.Impl;
@@ -34,7 +35,6 @@ public sealed class MessageBatch
     ///     sent to is determined by the partitioner
     ///     defined using the 'partitioner' configuration
     ///     property or partition parameter when specified.
-    ///     Method is thread safe.
     /// </summary>
     /// <param name="key">
     ///     The message key. 'ReadOnlySpan&lt;byte&gt;.Empty' can be used for null key.
@@ -70,11 +70,8 @@ public sealed class MessageBatch
         Timestamp timestamp = default,
         Partition? partition = null)
     {
-        if (Volatile.Read(ref completed) || handler.Task.IsCompleted)
+        if (completed)
             throw new InvalidOperationException("Batch is already completed.");
-
-        if (handler.Task.IsFaulted)
-            throw new InvalidOperationException("Producing faulted.", handler.Task.Exception);
 
         if (bufferWriter != null)
             averageSize = (averageSize + value.Length) / 2;
@@ -97,10 +94,7 @@ public sealed class MessageBatch
         {
             throw new ProduceException(
                 ex.Error,
-                new DeliveryResult
-                {
-                    TopicPartitionOffset = new TopicPartitionOffset(new(topic, partition ?? Partition.Any), Offset.Unset)
-                });
+                new(topic, partition ?? Partition.Any, Offset.Unset));
         }
     }
 
@@ -113,10 +107,7 @@ public sealed class MessageBatch
     /// </returns>
     public Task Complete(CancellationToken token = default)
     {
-        Volatile.Write(ref completed, true);
-
-        if (token.CanBeCanceled)
-            handler.CancellationTokenRegistration = token.Register(() => handler.TrySetCanceled());
+        completed = true;
 
         handler.Complete(sentCount);
 
@@ -126,7 +117,7 @@ public sealed class MessageBatch
             TopicMessageAverageSize.AddOrUpdate(topic, averageSize, (_, avg) => (avg + averageSize) / 2);
         }
 
-        return handler.Task;
+        return handler.Task.WaitAsync(token);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -150,8 +141,8 @@ public sealed class MessageBatch
     private sealed class DeliveryCounterHandler : TaskCompletionSource, IDeliveryHandler
     {
         private readonly string topic;
+        private ConcurrentBag<ProduceException>? exceptions;
         private int deliveryCount = 0;
-        public CancellationTokenRegistration CancellationTokenRegistration;
 
         public DeliveryCounterHandler(string topic)
             : base(TaskCreationOptions.RunContinuationsAsynchronously)
@@ -169,16 +160,8 @@ public sealed class MessageBatch
             }
             else
             {
-                var result = new DeliveryResult
-                {
-                    TopicPartitionOffset = deliveryReport.TopicPartitionOffset,
-                    Status = deliveryReport.Status,
-                    Timestamp = deliveryReport.Message.Timestamp,
-                    Headers = deliveryReport.Message.Headers,
-                    Topic = topic
-                };
-                CancellationTokenRegistration.Dispose();
-                TrySetException(new ProduceException(deliveryReport.Error, result));
+                exceptions ??= new ConcurrentBag<ProduceException>();
+                exceptions.Add(new ProduceException(deliveryReport.Error, new(topic, deliveryReport.Partition, deliveryReport.Offset), deliveryReport.Status));
             }
         }
 
@@ -194,8 +177,10 @@ public sealed class MessageBatch
             if (residual != 0)
                 return;
 
-            CancellationTokenRegistration.Dispose();
-            TrySetResult();
+            if (exceptions != null)
+                TrySetException(new AggregateException(exceptions));
+            else
+                TrySetResult();
         }
     }
 }

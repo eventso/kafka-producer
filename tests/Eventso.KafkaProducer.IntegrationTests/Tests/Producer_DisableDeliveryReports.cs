@@ -30,8 +30,6 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
         [Theory(Skip = "Not allowed"), MemberData(nameof(KafkaProducersParameters))]
         public void Producer_DisableDeliveryReports(string bootstrapServers, TestProducerType producerType)
         {
-            LogToFile("start Producer_DisableDeliveryReports");
-
             byte[] TestKey = new byte[] { 1, 2, 3, 4 };
             byte[] TestValue = new byte[] { 5, 6, 7, 8 };
 
@@ -98,7 +96,6 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
             }
 
             Assert.Equal(0, Library.HandleCount);
-            LogToFile("end   Producer_DisableDeliveryReports");
         }
     }
 }

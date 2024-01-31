@@ -8,8 +8,7 @@ namespace Eventso.KafkaProducer;
 internal static class LibrdProducer
 {
     private const int StackThreshold = 256;
-    // ReSharper disable once UseArrayEmptyMethod
-    private static readonly byte[] EmptyByteArray = new byte[0];
+    private static readonly byte[] EmptyByteArray = GC.AllocateArray<byte>(0, pinned: true);
 
     public static ErrorCode Produce(
         SafeKafkaHandle handle,

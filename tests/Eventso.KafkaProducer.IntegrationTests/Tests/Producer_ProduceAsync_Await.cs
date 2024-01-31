@@ -31,8 +31,6 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
         [Theory, MemberData(nameof(KafkaProducersParameters))]
         public void Producer_ProduceAsync_Await_Serializing(string bootstrapServers, TestProducerType producerType)
         {
-            LogToFile("start Producer_ProduceAsync_Await_Serializing");
-
             Func<Task> mthd = async () => 
             {
                 using (var producer = new TestProducerBuilder<Null, string>(new ProducerConfig { BootstrapServers = bootstrapServers }, producerType).Build())
@@ -50,7 +48,6 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
 #pragma warning restore xUnit1031
             
             Assert.Equal(0, Library.HandleCount);
-            LogToFile("end   Producer_ProduceAsync_Await_Serializing");
         }
 
         /// <summary>
@@ -60,8 +57,6 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
         [Theory, MemberData(nameof(KafkaProducersParameters))]
         public async Task Producer_ProduceAsync_Await_NonSerializing(string bootstrapServers, TestProducerType producerType)
         {
-            LogToFile("start Producer_ProduceAsync_Await_NonSerializing");
-
             using (var producer = new TestProducerBuilder<byte[], byte[]>(new ProducerConfig { BootstrapServers = bootstrapServers }, producerType).Build())
             {
                 var dr = await producer.ProduceAsync(
@@ -71,8 +66,6 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
             }
 
             Assert.Equal(0, Library.HandleCount);
-
-            LogToFile("end   Producer_ProduceAsync_Await_NonSerializing");
         }
 
         /// <summary>
@@ -82,8 +75,6 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
         [Theory, MemberData(nameof(KafkaParameters))]
         public async Task Producer_ProduceAsync_Await_Throws(string bootstrapServers)
         {
-            LogToFile("start Producer_ProduceAsync_Await_Throws");
-
             using (var producer = new ProducerBuilder<byte[], byte[]>(new ProducerConfig { BootstrapServers = bootstrapServers }).Build())
             {
                 await Assert.ThrowsAsync<ProduceException<byte[], byte[]>>(
@@ -112,14 +103,11 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
             Assert.Throws<AggregateException>(() => { mthd().Wait(); });
 
             Assert.Equal(0, Library.HandleCount);
-            LogToFile("end   Producer_ProduceAsync_Await_Throws");
         }
 
         [Theory, MemberData(nameof(KafkaParameters))]
         public async Task Producer_Binary_ProduceAsync_Await_Throws(string bootstrapServers)
         {
-            LogToFile("start Producer_Binary_ProduceAsync_Await_Throws");
-
             using (var producer = new ProducerBuilder(new ProducerConfig { BootstrapServers = bootstrapServers }).Build())
             {
                 await Assert.ThrowsAsync<ProduceException>(
@@ -150,7 +138,6 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
             Assert.Throws<AggregateException>(() => { mthd().Wait(); });
 
             Assert.Equal(0, Library.HandleCount);
-            LogToFile("end   Producer_Binary_ProduceAsync_Await_Throws");
         }
     }
 }

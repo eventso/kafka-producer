@@ -28,8 +28,6 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
         [Theory, MemberData(nameof(KafkaProducersParameters))]
         public async Task Producer_Handles(string bootstrapServers, TestProducerType producerType)
         {
-            LogToFile("start Producer_Handles");
-
             var producerConfig = new ProducerConfig { BootstrapServers = bootstrapServers };
 
             using (var topic = new TemporaryTopic(bootstrapServers, 1))
@@ -145,7 +143,6 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
             }
 
             Assert.Equal(0, Library.HandleCount);
-            LogToFile("end   Producer_Handles");
         }
     }
 }
