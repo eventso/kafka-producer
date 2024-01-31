@@ -152,17 +152,17 @@ public sealed class MessageBatch
 
         public void HandleDeliveryReport(DeliveryReport<Null, Null>? deliveryReport)
         {
-            if (deliveryReport?.Error?.IsError != true)
+            if (deliveryReport?.Error?.IsError == true)
             {
-                var residual = Interlocked.Decrement(ref deliveryCount);
+                if (exceptions == null)
+                    Interlocked.CompareExchange(ref exceptions, new ConcurrentBag<ProduceException>(), null);
 
-                TryComplete(residual);
-            }
-            else
-            {
-                exceptions ??= new ConcurrentBag<ProduceException>();
                 exceptions.Add(new ProduceException(deliveryReport.Error, new(topic, deliveryReport.Partition, deliveryReport.Offset), deliveryReport.Status));
             }
+
+            var residual = Interlocked.Decrement(ref deliveryCount);
+
+            TryComplete(residual);
         }
 
         public void Complete(int sentCount)
