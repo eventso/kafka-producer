@@ -3,7 +3,7 @@ using Confluent.Kafka;
 using Google.Protobuf;
 using Timestamp = Confluent.Kafka.Timestamp;
 
-namespace Eventso.KafkaProducer.Protobuf;
+namespace Eventso.KafkaProducer;
 
 public static class ProtoValueExtensions
 {

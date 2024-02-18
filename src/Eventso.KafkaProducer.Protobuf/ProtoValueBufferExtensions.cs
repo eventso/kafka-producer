@@ -4,7 +4,7 @@ using Confluent.Kafka;
 using Google.Protobuf;
 using Timestamp = Confluent.Kafka.Timestamp;
 
-namespace Eventso.KafkaProducer.Protobuf;
+namespace Eventso.KafkaProducer;
 
 public static class ProtoValueBufferExtensions
 {
@@ -194,7 +194,7 @@ public static class ProtoValueBufferExtensions
         this MessageBatch batch,
         string? key,
         IMessage value,
-        IBuffer<byte>? buffer,
+        IBuffer<byte>? buffer = null,
         Headers? headers = null,
         Timestamp timestamp = default,
         Partition? partition = null,

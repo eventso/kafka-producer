@@ -1,7 +1,7 @@
 ﻿using System.Buffers;
 using Google.Protobuf;
 
-namespace Eventso.KafkaProducer.Protobuf;
+namespace Eventso.KafkaProducer;
 
 public readonly struct ProtoValue(IMessage value) : IBinarySerializable, IBinaryBufferWritable
 {

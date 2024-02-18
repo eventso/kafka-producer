@@ -4,8 +4,6 @@ using BenchmarkDotNet.Order;
 using CommunityToolkit.HighPerformance.Buffers;
 using Confluent.Kafka;
 using Confluent.Kafka.Admin;
-using Eventso.KafkaProducer.Json;
-using Eventso.KafkaProducer.Protobuf;
 using Google.Protobuf;
 using Tests;
 
@@ -176,7 +174,7 @@ public class Producing
         var records = Enumerable.Repeat(order, MessageCount);
         var batch = binaryProducer.CreateBatch(Topic);
         foreach (var record in records)
-            Eventso.KafkaProducer.SpanJson.JsonValueExtensions.ProduceJson(batch, 123456L, record);
+            SpanJsonValueExtensions.ProduceJson(batch, 123456L, record);
         
         await batch.Complete();
     }

@@ -3,7 +3,7 @@ using CommunityToolkit.HighPerformance.Buffers;
 using Confluent.Kafka;
 using Timestamp = Confluent.Kafka.Timestamp;
 
-namespace Eventso.KafkaProducer.Json;
+namespace Eventso.KafkaProducer;
 
 /// <summary>
 /// Extends binary producer with frequently used key types

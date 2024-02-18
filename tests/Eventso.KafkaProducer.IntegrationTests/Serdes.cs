@@ -2,6 +2,7 @@ using Confluent.Kafka;
 using Confluent.Kafka.SyncOverAsync;
 using System.Buffers.Binary;
 using System.Runtime.InteropServices;
+using Tests;
 
 namespace Eventso.KafkaProducer.IntegrationTests
 {
@@ -25,6 +26,14 @@ namespace Eventso.KafkaProducer.IntegrationTests
         {
             Thread.Sleep(500);
             return Serializers.Utf8.Serialize(data, context);
+        }
+    }
+
+    public sealed class OrderProtoDeserializer : IDeserializer<OrderProto>
+    {
+        public OrderProto Deserialize(ReadOnlySpan<byte> data, bool isNull, SerializationContext context)
+        {
+            return OrderProto.Parser.ParseFrom(data);
         }
     }
 

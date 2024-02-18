@@ -4,9 +4,9 @@ using Confluent.Kafka;
 using SpanJson;
 using Timestamp = Confluent.Kafka.Timestamp;
 
-namespace Eventso.KafkaProducer.SpanJson;
+namespace Eventso.KafkaProducer;
 
-public static class JsonValueExtensions
+public static class SpanJsonValueExtensions
 {
     public static Task<DeliveryResult> ProduceJsonAsync<T>(
         this IProducer producer,

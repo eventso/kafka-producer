@@ -2,6 +2,7 @@
 
 	<PropertyGroup>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<RootNamespace>Eventso.KafkaProducer</RootNamespace>
 	</PropertyGroup>
 
 	<ItemGroup>

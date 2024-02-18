@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+	<PackageReference Include="AutoFixture" />
 	<PackageReference Include="Google.Protobuf" />
     <PackageReference Include="FluentAssertions" />
     <PackageReference Include="Grpc.Tools">
@@ -29,6 +30,9 @@
 
   <ItemGroup>
 	<Protobuf Include="test.proto" Link="test.proto" GrpcServices="Client" />
+	<ProjectReference Include="..\..\src\Eventso.KafkaProducer.Json\Eventso.KafkaProducer.Json.csproj" />
+	<ProjectReference Include="..\..\src\Eventso.KafkaProducer.Protobuf\Eventso.KafkaProducer.Protobuf.csproj" />
+	<ProjectReference Include="..\..\src\Eventso.KafkaProducer.SpanJson\Eventso.KafkaProducer.SpanJson.csproj" />
     <ProjectReference Include="..\..\src\Eventso.KafkaProducer\Eventso.KafkaProducer.csproj" />
   </ItemGroup>
 

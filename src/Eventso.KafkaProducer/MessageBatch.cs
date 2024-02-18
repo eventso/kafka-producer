@@ -20,7 +20,8 @@ public sealed class MessageBatch
     private ArrayPoolBufferWriter<byte>? bufferWriter;
 
     private int averageSize = 256;
-    private static readonly ConcurrentDictionary<string, int> TopicMessageAverageSize = new();
+    private int maxSize = 256;
+    private static readonly ConcurrentDictionary<string, (int avg, int max)> TopicMessageSize = new();
 
     public MessageBatch(IProducer producer, string topic)
     {
@@ -74,7 +75,10 @@ public sealed class MessageBatch
             throw new InvalidOperationException("Batch is already completed.");
 
         if (bufferWriter != null)
+        {
             averageSize = (averageSize + value.Length) / 2;
+            maxSize = Math.Max(maxSize, value.Length);
+        }
 
         try
         {
@@ -114,7 +118,10 @@ public sealed class MessageBatch
         if (bufferWriter != null)
         {
             bufferWriter.Dispose();
-            TopicMessageAverageSize.AddOrUpdate(topic, averageSize, (_, avg) => (avg + averageSize) / 2);
+            TopicMessageSize.AddOrUpdate(
+                topic,
+                (averageSize, maxSize),
+                (_, stat) => ((stat.avg + averageSize) / 2, Math.Max(stat.max, maxSize)));
         }
 
         return handler.Task.WaitAsync(token);
@@ -131,8 +138,8 @@ public sealed class MessageBatch
 
     private void InitBuffer()
     {
-        var capacity = TopicMessageAverageSize.TryGetValue(topic, out averageSize)
-            ? Math.Max(256, (int)(averageSize * 1.5))
+        var capacity = TopicMessageSize.TryGetValue(topic, out var stat)
+            ? Math.Max(256, Math.Min((int)(stat.avg * 1.5), stat.max))
             : 512;
 
         bufferWriter = new ArrayPoolBufferWriter<byte>(capacity);
@@ -157,7 +164,8 @@ public sealed class MessageBatch
                 if (exceptions == null)
                     Interlocked.CompareExchange(ref exceptions, new ConcurrentBag<ProduceException>(), null);
 
-                exceptions.Add(new ProduceException(deliveryReport.Error, new(topic, deliveryReport.Partition, deliveryReport.Offset), deliveryReport.Status));
+                exceptions.Add(new ProduceException(deliveryReport.Error, new(topic, deliveryReport.Partition, deliveryReport.Offset),
+                    deliveryReport.Status));
             }
 
             var residual = Interlocked.Decrement(ref deliveryCount);

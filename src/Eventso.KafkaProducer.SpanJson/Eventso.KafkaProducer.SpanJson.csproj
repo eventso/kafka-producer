@@ -1,7 +1,8 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<RootNamespace>Eventso.KafkaProducer</RootNamespace>
 	</PropertyGroup>
 
 	<ItemGroup>

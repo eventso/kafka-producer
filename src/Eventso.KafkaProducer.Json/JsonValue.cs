@@ -1,7 +1,7 @@
 ﻿using System.Buffers;
 using System.Text.Json;
 
-namespace Eventso.KafkaProducer.Json;
+namespace Eventso.KafkaProducer;
 
 public readonly struct JsonValue<T>(
     T value,
