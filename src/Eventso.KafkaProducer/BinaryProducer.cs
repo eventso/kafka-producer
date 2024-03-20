@@ -19,9 +19,7 @@ internal static class BinaryProducer
         if (timestamp.Type != TimestampType.CreateTime)
         {
             if (timestamp != Timestamp.Default)
-            {
                 throw new ArgumentException("Timestamp must be either Timestamp.Default, or Timestamp.CreateTime.");
-            }
         }
 
         ErrorCode err;
@@ -66,8 +64,6 @@ internal static class BinaryProducer
         }
 
         if (err != ErrorCode.NoError)
-        {
             throw new KafkaException(handle.CreatePossiblyFatalError(err, null));
-        }
     }
 }

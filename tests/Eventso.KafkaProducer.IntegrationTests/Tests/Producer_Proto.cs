@@ -1,9 +1,12 @@
 #pragma warning disable xUnit1026
 
+using System.Buffers.Binary;
 using AutoFixture;
 using CommunityToolkit.HighPerformance.Buffers;
 using Confluent.Kafka;
 using FluentAssertions;
+using Google.Protobuf.WellKnownTypes;
+using Newtonsoft.Json.Linq;
 using Tests;
 using Xunit;
 
@@ -45,6 +48,8 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
                 short.MinValue
             };
 
+            var destination = new byte[2];
+            
             var batch = producer.CreateBatch(topic.Name);
 
             foreach (var key in keys)
@@ -52,12 +57,33 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
 
             await batch.Complete();
 
+            var batch2 = producer.CreateBatch(topic.Name);
+
+            foreach (var key in keys)
+            {
+                BinaryPrimitives.WriteInt16BigEndian(destination, key);
+                batch2.Produce(destination, testProto);
+            }
+
+            await batch2.Complete();
+
             foreach (var key in keys)
                 await producer.ProduceAsync(topic.Name, key, testProto, buffer);
 
             foreach (var key in keys)
+            {
+                BinaryPrimitives.WriteInt16BigEndian(destination, key);
+                await producer.ProduceAsync(topic.Name, destination, testProto, buffer);
+            }
+
+            foreach (var key in keys)
                 producer.Produce(topic.Name, key, testProto, buffer);
 
+            foreach (var key in keys)
+            {
+                BinaryPrimitives.WriteInt16BigEndian(destination, key);
+                producer.Produce(topic.Name, destination, testProto, buffer);
+            }
 
             var consumerConfig = new ConsumerConfig { BootstrapServers = bootstrapServers, GroupId = Guid.NewGuid().ToString() };
 
@@ -68,7 +94,7 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
 
             consumer.Assign(new TopicPartitionOffset(topic.Name, 0, 0));
 
-            foreach (var key in Enumerable.Repeat(keys, 3).SelectMany(x => x))
+            foreach (var key in Enumerable.Repeat(keys, 6).SelectMany(x => x))
             {
                 var result = consumer.Consume(TimeSpan.FromSeconds(10));
                 result.Message.Key.Should().Be(key);
