@@ -211,7 +211,9 @@ public static class TypedKeyExtensions
     {
         var keySize = key.GetSize();
         byte[]? keyBytesPooled = null;
-        var keyBytes = keySize <= StackThreshold ? stackalloc byte[keySize] : keyBytesPooled = ArrayPool<byte>.Shared.Rent(keySize);
+        var keyBytes = keySize <= StackThreshold 
+            ? stackalloc byte[keySize] 
+            : (keyBytesPooled = ArrayPool<byte>.Shared.Rent(keySize)).AsSpan(0, keySize);
 
         try
         {
@@ -240,7 +242,9 @@ public static class TypedKeyExtensions
     {
         var keySize = key.GetSize();
         byte[]? keyBytesPooled = null;
-        var keyBytes = keySize <= StackThreshold ? stackalloc byte[keySize] : keyBytesPooled = ArrayPool<byte>.Shared.Rent(keySize);
+        var keyBytes = keySize <= StackThreshold 
+            ? stackalloc byte[keySize] 
+            : (keyBytesPooled = ArrayPool<byte>.Shared.Rent(keySize)).AsSpan(0, keySize);
 
         try
         {
@@ -267,7 +271,9 @@ public static class TypedKeyExtensions
     {
         var keySize = key.GetSize();
         byte[]? keyBytesPooled = null;
-        var keyBytes = keySize <= StackThreshold ? stackalloc byte[keySize] : keyBytesPooled = ArrayPool<byte>.Shared.Rent(keySize);
+        var keyBytes = keySize <= StackThreshold 
+            ? stackalloc byte[keySize] 
+            : (keyBytesPooled = ArrayPool<byte>.Shared.Rent(keySize)).AsSpan(0, keySize);
 
         try
         {

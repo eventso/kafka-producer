@@ -25,7 +25,7 @@ public static class TypedValueExtensions
         byte[]? valueBytesPooled = null;
         var valueBytes = valueSize <= StackThreshold
             ? stackalloc byte[valueSize]
-            : valueBytesPooled = ArrayPool<byte>.Shared.Rent(valueSize);
+            : (valueBytesPooled = ArrayPool<byte>.Shared.Rent(valueSize)).AsSpan(0, valueSize);
 
         try
         {
@@ -63,7 +63,7 @@ public static class TypedValueExtensions
         byte[]? valueBytesPooled = null;
         var valueBytes = valueSize <= StackThreshold
             ? stackalloc byte[valueSize]
-            : valueBytesPooled = ArrayPool<byte>.Shared.Rent(valueSize);
+            : (valueBytesPooled = ArrayPool<byte>.Shared.Rent(valueSize)).AsSpan(0, valueSize);
 
         try
         {
@@ -99,7 +99,7 @@ public static class TypedValueExtensions
         byte[]? valueBytesPooled = null;
         var valueBytes = valueSize <= StackThreshold
             ? stackalloc byte[valueSize]
-            : valueBytesPooled = ArrayPool<byte>.Shared.Rent(valueSize);
+            : (valueBytesPooled = ArrayPool<byte>.Shared.Rent(valueSize)).AsSpan(0, valueSize);
 
         try
         {
