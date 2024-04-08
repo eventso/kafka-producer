@@ -11,7 +11,8 @@ public readonly struct GuidValue(Guid value) : IBinarySerializable
     {
         // source https://github.com/npgsql/npgsql/blob/main/src/Npgsql/Internal/Converters/Primitive/GuidUuidConverter.cs
 #if NET8_0_OR_GREATER
-        value.TryWriteBytes(destination, bigEndian: true, out _);
+        if (!value.TryWriteBytes(destination, bigEndian: true, out _))
+            throw new ArgumentException("Size of destination should be at least 16 bytes.");
 #else
         var raw = new GuidRaw(value);
         BinaryPrimitives.WriteInt32BigEndian(destination, raw.Data1);
