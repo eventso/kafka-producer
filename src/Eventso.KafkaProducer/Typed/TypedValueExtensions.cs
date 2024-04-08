@@ -21,7 +21,7 @@ public static class TypedValueExtensions
         Partition? partition = null)
         where TValue : IBinarySerializable
     {
-        var valueSize = value.GetSize();
+        var valueSize = value.Size;
         byte[]? valueBytesPooled = null;
         var valueBytes = valueSize <= StackThreshold
             ? stackalloc byte[valueSize]
@@ -59,7 +59,7 @@ public static class TypedValueExtensions
         Partition? partition = null)
         where TValue : IBinarySerializable
     {
-        var valueSize = value.GetSize();
+        var valueSize = value.Size;
         byte[]? valueBytesPooled = null;
         var valueBytes = valueSize <= StackThreshold
             ? stackalloc byte[valueSize]
@@ -95,7 +95,7 @@ public static class TypedValueExtensions
         Partition? partition = null)
         where TValue : IBinarySerializable
     {
-        var valueSize = value.GetSize();
+        var valueSize = value.Size;
         byte[]? valueBytesPooled = null;
         var valueBytes = valueSize <= StackThreshold
             ? stackalloc byte[valueSize]

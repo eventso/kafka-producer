@@ -1,31 +1,15 @@
-﻿using System.Buffers;
-using Google.Protobuf;
+﻿using Google.Protobuf;
 
 namespace Eventso.KafkaProducer;
 
-public readonly struct ProtoSpanValue : IBinarySerializable
+public readonly struct ProtoSpanValue(IMessage value) : IBinarySerializable
 {
-    private readonly IMessage value;
-    private readonly int size;
-
-    public ProtoSpanValue(IMessage value)
-    {
-        this.value = value;
-        size = value.CalculateSize();
-    }
-
-    public int GetSize() => size;
+    public int Size { get; } = value.CalculateSize();
 
     public int WriteBytes(Span<byte> destination)
     {
-        value.WriteTo(destination[..size]);
+        value.WriteTo(destination[..Size]);
 
-        return size;
+        return Size;
     }
-}
-
-public readonly struct ProtoBufferValue(IMessage value) : IBinaryBufferWritable
-{
-    public void WriteBytes(IBufferWriter<byte> buffer)
-        => value.WriteTo(buffer);
 }

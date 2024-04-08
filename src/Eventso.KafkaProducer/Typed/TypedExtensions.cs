@@ -22,11 +22,11 @@ public static class TypedExtensions
         where TKey : IBinarySerializable
         where TValue : IBinarySerializable
     {
-        var keySize = key.GetSize();
+        var keySize = key.Size;
         byte[]? keyBytesPooled = null;
         var keyBytes = keySize <= StackThreshold ? stackalloc byte[keySize] : keyBytesPooled = ArrayPool<byte>.Shared.Rent(keySize);
 
-        var valueSize = value.GetSize();
+        var valueSize = value.Size;
         byte[]? valueBytesPooled = null;
         var valueBytes = valueSize <= StackThreshold + StackThreshold - keySize
             ? stackalloc byte[valueSize]
@@ -69,11 +69,11 @@ public static class TypedExtensions
         where TKey : IBinarySerializable
         where TValue : IBinarySerializable
     {
-        var keySize = key.GetSize();
+        var keySize = key.Size;
         byte[]? keyBytesPooled = null;
         var keyBytes = keySize <= StackThreshold ? stackalloc byte[keySize] : keyBytesPooled = ArrayPool<byte>.Shared.Rent(keySize);
 
-        var valueSize = value.GetSize();
+        var valueSize = value.Size;
         byte[]? valueBytesPooled = null;
         var valueBytes = valueSize <= StackThreshold + StackThreshold - keySize
             ? stackalloc byte[valueSize]
@@ -114,11 +114,11 @@ public static class TypedExtensions
         where TKey : IBinarySerializable
         where TValue : IBinarySerializable
     {
-        var keySize = key.GetSize();
+        var keySize = key.Size;
         byte[]? keyBytesPooled = null;
         var keyBytes = keySize <= StackThreshold ? stackalloc byte[keySize] : keyBytesPooled = ArrayPool<byte>.Shared.Rent(keySize);
 
-        var valueSize = value.GetSize();
+        var valueSize = value.Size;
         byte[]? valueBytesPooled = null;
         var valueBytes = valueSize <= StackThreshold + StackThreshold - keySize
             ? stackalloc byte[valueSize]
@@ -160,7 +160,7 @@ public static class TypedExtensions
         where TKey : IBinarySerializable
         where TValue : IBinaryBufferWritable
     {
-        var keySize = key.GetSize();
+        var keySize = key.Size;
         byte[]? keyBytesPooled = null;
         var keyBytes = keySize <= StackThreshold ? stackalloc byte[keySize] : keyBytesPooled = ArrayPool<byte>.Shared.Rent(keySize);
 
@@ -201,7 +201,7 @@ public static class TypedExtensions
         where TKey : IBinarySerializable
         where TValue : IBinaryBufferWritable
     {
-        var keySize = key.GetSize();
+        var keySize = key.Size;
         byte[]? keyBytesPooled = null;
         var keyBytes = keySize <= StackThreshold ? stackalloc byte[keySize] : keyBytesPooled = ArrayPool<byte>.Shared.Rent(keySize);
 
@@ -240,7 +240,7 @@ public static class TypedExtensions
         where TKey : IBinarySerializable
         where TValue : IBinaryBufferWritable
     {
-        var keySize = key.GetSize();
+        var keySize = key.Size;
         byte[]? keyBytesPooled = null;
         var keyBytes = keySize <= StackThreshold ? stackalloc byte[keySize] : keyBytesPooled = ArrayPool<byte>.Shared.Rent(keySize);
 

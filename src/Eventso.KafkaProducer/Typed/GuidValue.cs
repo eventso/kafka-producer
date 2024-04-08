@@ -5,7 +5,7 @@ namespace Eventso.KafkaProducer;
 
 public readonly struct GuidValue(Guid value) : IBinarySerializable
 {
-    public int GetSize() => 16;
+    public int Size => 16;
 
     public int WriteBytes(Span<byte> destination)
     {
@@ -23,7 +23,7 @@ public readonly struct GuidValue(Guid value) : IBinarySerializable
             BitConverter.IsLittleEndian ? BinaryPrimitives.ReverseEndianness(raw.Data4) : raw.Data4);
 #endif
 
-        return GetSize();
+        return Size;
     }
 
     public static implicit operator GuidValue(Guid value) => new(value);

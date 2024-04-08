@@ -2,6 +2,6 @@
 
 public interface IBinarySerializable
 {
-    int GetSize();
+    int Size { get; }
     int WriteBytes(Span<byte> destination);
 }
