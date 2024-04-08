@@ -209,7 +209,7 @@ public static class TypedKeyExtensions
         Partition? partition = null)
         where TKey : IBinarySerializable
     {
-        var keySize = key.GetSize();
+        var keySize = key.Size;
         byte[]? keyBytesPooled = null;
         var keyBytes = keySize <= StackThreshold ? stackalloc byte[keySize] : keyBytesPooled = ArrayPool<byte>.Shared.Rent(keySize);
 
@@ -238,7 +238,7 @@ public static class TypedKeyExtensions
         Partition? partition = null)
         where TKey : IBinarySerializable
     {
-        var keySize = key.GetSize();
+        var keySize = key.Size;
         byte[]? keyBytesPooled = null;
         var keyBytes = keySize <= StackThreshold ? stackalloc byte[keySize] : keyBytesPooled = ArrayPool<byte>.Shared.Rent(keySize);
 
@@ -265,7 +265,7 @@ public static class TypedKeyExtensions
         Partition? partition = null)
         where TKey : IBinarySerializable
     {
-        var keySize = key.GetSize();
+        var keySize = key.Size;
         byte[]? keyBytesPooled = null;
         var keyBytes = keySize <= StackThreshold ? stackalloc byte[keySize] : keyBytesPooled = ArrayPool<byte>.Shared.Rent(keySize);
 

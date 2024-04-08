@@ -9,12 +9,13 @@ public readonly struct StringValue(string? value, Encoding encoding) : IBinarySe
     {
     }
 
-    public int GetSize() => value == null ? 0 : encoding.GetMaxByteCount(value.Length);
+    public int Size { get; } = value == null ? 0 : encoding.GetMaxByteCount(value.Length);
 
     public int WriteBytes(Span<byte> destination)
     {
         if (value != null)
             return encoding.GetBytes(value, destination);
+
         return 0;
     }
 

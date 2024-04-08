@@ -137,7 +137,7 @@ public class Producing
         var buffer = batch.GetBuffer();
 
         foreach (var record in records)
-            batch.Produce<LongValue, ProtoValue>(123456L, new(record));
+            batch.Produce<LongValue, ProtoSpanValue>(123456L, new(record));
 
         await batch.Complete();
     }

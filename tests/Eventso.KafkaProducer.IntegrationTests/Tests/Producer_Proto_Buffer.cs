@@ -5,8 +5,6 @@ using AutoFixture;
 using CommunityToolkit.HighPerformance.Buffers;
 using Confluent.Kafka;
 using FluentAssertions;
-using Google.Protobuf.WellKnownTypes;
-using Newtonsoft.Json.Linq;
 using Tests;
 using Xunit;
 

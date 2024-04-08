@@ -5,13 +5,14 @@ namespace Eventso.KafkaProducer;
 
 public readonly struct GuidValue(Guid value) : IBinarySerializable
 {
-    public int GetSize() => 16;
+    public int Size => 16;
 
     public int WriteBytes(Span<byte> destination)
     {
         // source https://github.com/npgsql/npgsql/blob/main/src/Npgsql/Internal/Converters/Primitive/GuidUuidConverter.cs
 #if NET8_0_OR_GREATER
-        value.TryWriteBytes(destination, bigEndian: true, out _);
+        if (!value.TryWriteBytes(destination, bigEndian: true, out _))
+            throw new ArgumentException("Size of destination should be at least 16 bytes.");
 #else
         var raw = new GuidRaw(value);
         BinaryPrimitives.WriteInt32BigEndian(destination, raw.Data1);
@@ -22,7 +23,7 @@ public readonly struct GuidValue(Guid value) : IBinarySerializable
             BitConverter.IsLittleEndian ? BinaryPrimitives.ReverseEndianness(raw.Data4) : raw.Data4);
 #endif
 
-        return GetSize();
+        return Size;
     }
 
     public static implicit operator GuidValue(Guid value) => new(value);
