@@ -3,6 +3,7 @@
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
 		<IsPackable>false</IsPackable>
+		<NoWarn>SYSLIB1037</NoWarn>
 	</PropertyGroup>
 
 	<ItemGroup>

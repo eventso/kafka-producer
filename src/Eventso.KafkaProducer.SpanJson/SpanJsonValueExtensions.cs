@@ -173,6 +173,7 @@ public static class SpanJsonValueExtensions
         Partition? partition = null)
     {
         using var valueBytes = new Owner(JsonSerializer.Generic.Utf8.SerializeToArrayPool(value));
+        
         batch.Produce(key, valueBytes.value, headers, timestamp, partition);
     }
 
@@ -234,6 +235,7 @@ public static class SpanJsonValueExtensions
         Encoding? keyEncoding = default)
     {
         using var valueBytes = new Owner(JsonSerializer.Generic.Utf8.SerializeToArrayPool(value));
+        
         batch.Produce(
             key,
             valueBytes.value,

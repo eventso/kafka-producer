@@ -31,6 +31,7 @@ public sealed class ProducerBuilder
         if (config.EnableDeliveryReports == false)
             throw new NotSupportedException(
                 "Disabled delivery reports is not supported. Config property: EnableDeliveryReports must be true");
+       
         inner = new(config);
     }
 

@@ -3,6 +3,7 @@
 	<PropertyGroup>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<RootNamespace>Eventso.KafkaProducer</RootNamespace>
+		<Description>Kafka producer with SpanJson serialization. Low memory allocation and effective batching api.</Description>
 	</PropertyGroup>
 
 	<ItemGroup>
