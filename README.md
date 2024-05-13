@@ -86,7 +86,7 @@ Additional packages contain method overloads that accepts Google.Protobuf.IMessa
 * [SpanJson](https://www.nuget.org/packages/Eventso.KafkaProducer.SpanJson/)
 
 
-## Performance and memory allocation benchmark (.net 8)
+## Performance and memory allocation benchmark
 
 [Benchmark source code](https://github.com/eventso/kafka-producer/blob/main/benchmarks/Eventso.KafkaProducer.Benchmark/Producing.cs)
 
