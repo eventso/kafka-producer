@@ -1,5 +1,5 @@
 ﻿using System.Text;
-using System.Text.Json;
+using System.Text.Json.Serialization;
 using CommunityToolkit.HighPerformance.Buffers;
 using Confluent.Kafka;
 using Timestamp = Confluent.Kafka.Timestamp;
@@ -9,14 +9,14 @@ namespace Eventso.KafkaProducer;
 /// <summary>
 /// Extends binary producer with frequently used key types
 /// </summary>
-public static class JsonValueExtensions
+public static class JsonContextValueExtensions
 {
     public static Task<DeliveryResult> ProduceJsonAsync<T>(
         this IProducer producer,
         string topic,
         ReadOnlySpan<byte> key,
         T value,
-        JsonSerializerOptions? serializerOptions = null,
+        JsonSerializerContext serializerContext,
         IBuffer<byte>? buffer = null,
         CancellationToken cancellationToken = default,
         Headers? headers = null,
@@ -25,10 +25,10 @@ public static class JsonValueExtensions
     {
         using var newBuffer = buffer == null ? new ArrayPoolBufferWriter<byte>() : null;
 
-        return producer.ProduceAsync<JsonValue<T>>(
+        return producer.ProduceAsync<JsonContextValue<T>>(
             topic, 
             key, 
-            new(value, serializerOptions), 
+            new(value, serializerContext), 
             buffer ?? newBuffer!, 
             cancellationToken, 
             headers, 
@@ -41,7 +41,7 @@ public static class JsonValueExtensions
         string topic,
         ReadOnlySpan<byte> key,
         T value,
-        JsonSerializerOptions? serializerOptions = null,
+        JsonSerializerContext serializerContext,
         IBuffer<byte>? buffer = null,
         Headers? headers = null,
         Timestamp timestamp = default,
@@ -50,10 +50,10 @@ public static class JsonValueExtensions
     {
         using var newBuffer = buffer == null ? new ArrayPoolBufferWriter<byte>() : null;
 
-        producer.Produce<JsonValue<T>>(
+        producer.Produce<JsonContextValue<T>>(
             topic,
             key,
-            new(value, serializerOptions),
+            new(value, serializerContext),
             buffer ?? newBuffer!,
             headers,
             timestamp,
@@ -65,14 +65,14 @@ public static class JsonValueExtensions
         this MessageBatch batch,
         ReadOnlySpan<byte> key,
         T value,
-        JsonSerializerOptions? serializerOptions = null,
+        JsonSerializerContext serializerContext,
         IBuffer<byte>? buffer = null,
         Headers? headers = null,
         Timestamp timestamp = default,
         Partition? partition = null)
-        => batch.Produce<JsonValue<T>>(
+        => batch.Produce<JsonContextValue<T>>(
             key,
-            new(value, serializerOptions),
+            new(value, serializerContext),
             buffer ?? batch.GetBuffer(),
             headers,
             timestamp,
@@ -83,7 +83,7 @@ public static class JsonValueExtensions
         string topic,
         short key,
         T value,
-        JsonSerializerOptions? serializerOptions = null,
+        JsonSerializerContext serializerContext,
         IBuffer<byte>? buffer = null,
         CancellationToken cancellationToken = default,
         Headers? headers = null,
@@ -92,10 +92,10 @@ public static class JsonValueExtensions
     {
         using var newBuffer = buffer == null ? new ArrayPoolBufferWriter<byte>() : null;
 
-        return producer.ProduceAsync<ShortValue, JsonValue<T>>(
+        return producer.ProduceAsync<ShortValue, JsonContextValue<T>>(
             topic,
             key,
-            new(value, serializerOptions),
+            new(value, serializerContext),
             buffer ?? newBuffer!,
             cancellationToken,
             headers,
@@ -108,7 +108,7 @@ public static class JsonValueExtensions
         string topic,
         short key,
         T value,
-        JsonSerializerOptions? serializerOptions = null,
+        JsonSerializerContext serializerContext,
         IBuffer<byte>? buffer = null,
         Headers? headers = null,
         Timestamp timestamp = default,
@@ -117,10 +117,10 @@ public static class JsonValueExtensions
     {
         using var newBuffer = buffer == null ? new ArrayPoolBufferWriter<byte>() : null;
 
-        producer.Produce<ShortValue, JsonValue<T>>(
+        producer.Produce<ShortValue, JsonContextValue<T>>(
             topic,
             key,
-            new(value, serializerOptions),
+            new(value, serializerContext),
             buffer ?? newBuffer!,
             headers,
             timestamp,
@@ -132,14 +132,14 @@ public static class JsonValueExtensions
         this MessageBatch batch,
         short key,
         T value,
-        JsonSerializerOptions? serializerOptions = null,
+        JsonSerializerContext serializerContext,
         IBuffer<byte>? buffer = null,
         Headers? headers = null,
         Timestamp timestamp = default,
         Partition? partition = null)
-        => batch.Produce<ShortValue, JsonValue<T>>(
+        => batch.Produce<ShortValue, JsonContextValue<T>>(
             key,
-            new(value, serializerOptions),
+            new(value, serializerContext),
             buffer ?? batch.GetBuffer(),
             headers,
             timestamp,
@@ -150,7 +150,7 @@ public static class JsonValueExtensions
         string topic,
         int key,
         T value,
-        JsonSerializerOptions? serializerOptions = null,
+        JsonSerializerContext serializerContext,
         IBuffer<byte>? buffer = null,
         CancellationToken cancellationToken = default,
         Headers? headers = null,
@@ -159,10 +159,10 @@ public static class JsonValueExtensions
     {
         using var newBuffer = buffer == null ? new ArrayPoolBufferWriter<byte>() : null;
 
-        return producer.ProduceAsync<IntValue, JsonValue<T>>(
+        return producer.ProduceAsync<IntValue, JsonContextValue<T>>(
             topic,
             key,
-            new(value, serializerOptions),
+            new(value, serializerContext),
             buffer ?? newBuffer!,
             cancellationToken,
             headers,
@@ -175,7 +175,7 @@ public static class JsonValueExtensions
         string topic,
         int key,
         T value,
-        JsonSerializerOptions? serializerOptions = null,
+        JsonSerializerContext serializerContext,
         IBuffer<byte>? buffer = null,
         Headers? headers = null,
         Timestamp timestamp = default,
@@ -184,10 +184,10 @@ public static class JsonValueExtensions
     {
         using var newBuffer = buffer == null ? new ArrayPoolBufferWriter<byte>() : null;
 
-        producer.Produce<IntValue, JsonValue<T>>(
+        producer.Produce<IntValue, JsonContextValue<T>>(
             topic,
             key,
-            new(value, serializerOptions),
+            new(value, serializerContext),
             buffer ?? newBuffer!,
             headers,
             timestamp,
@@ -199,14 +199,14 @@ public static class JsonValueExtensions
         this MessageBatch batch,
         int key,
         T value,
-        JsonSerializerOptions? serializerOptions = null,
+        JsonSerializerContext serializerContext,
         IBuffer<byte>? buffer = null,
         Headers? headers = null,
         Timestamp timestamp = default,
         Partition? partition = null)
-        => batch.Produce<IntValue, JsonValue<T>>(
+        => batch.Produce<IntValue, JsonContextValue<T>>(
             key,
-            new(value, serializerOptions),
+            new(value, serializerContext),
             buffer ?? batch.GetBuffer(),
             headers,
             timestamp,
@@ -217,7 +217,7 @@ public static class JsonValueExtensions
         string topic,
         long key,
         T value,
-        JsonSerializerOptions? serializerOptions = null,
+        JsonSerializerContext serializerContext,
         IBuffer<byte>? buffer = null,
         CancellationToken cancellationToken = default,
         Headers? headers = null,
@@ -228,10 +228,10 @@ public static class JsonValueExtensions
             ? new ArrayPoolBufferWriter<byte>()
             : null;
 
-        return producer.ProduceAsync<LongValue, JsonValue<T>>(
+        return producer.ProduceAsync<LongValue, JsonContextValue<T>>(
             topic,
             key,
-            new(value, serializerOptions),
+            new(value, serializerContext),
             buffer ?? newBuffer!,
             cancellationToken,
             headers,
@@ -244,7 +244,7 @@ public static class JsonValueExtensions
         string topic,
         long key,
         T value,
-        JsonSerializerOptions? serializerOptions = null,
+        JsonSerializerContext serializerContext,
         IBuffer<byte>? buffer = null,
         Headers? headers = null,
         Timestamp timestamp = default,
@@ -255,10 +255,10 @@ public static class JsonValueExtensions
             ? new ArrayPoolBufferWriter<byte>()
             : null;
 
-        producer.Produce<LongValue, JsonValue<T>>(
+        producer.Produce<LongValue, JsonContextValue<T>>(
             topic,
             key,
-            new(value, serializerOptions),
+            new(value, serializerContext),
             buffer ?? newBuffer!,
             headers,
             timestamp,
@@ -270,14 +270,14 @@ public static class JsonValueExtensions
         this MessageBatch batch,
         long key,
         T value,
-        JsonSerializerOptions? serializerOptions = null,
+        JsonSerializerContext serializerContext,
         IBuffer<byte>? buffer = null,
         Headers? headers = null,
         Timestamp timestamp = default,
         Partition? partition = null)
-        => batch.Produce<LongValue, JsonValue<T>>(
+        => batch.Produce<LongValue, JsonContextValue<T>>(
             key,
-            new(value, serializerOptions),
+            new(value, serializerContext),
             buffer ?? batch.GetBuffer(),
             headers,
             timestamp,
@@ -288,7 +288,7 @@ public static class JsonValueExtensions
         string topic,
         string? key,
         T value,
-        JsonSerializerOptions? serializerOptions = null,
+        JsonSerializerContext serializerContext,
         IBuffer<byte>? buffer = null,
         CancellationToken cancellationToken = default,
         Headers? headers = null,
@@ -300,13 +300,13 @@ public static class JsonValueExtensions
             ? new ArrayPoolBufferWriter<byte>()
             : null;
 
-        return producer.ProduceAsync<StringValue, JsonValue<T>>(
+        return producer.ProduceAsync<StringValue, JsonContextValue<T>>(
             topic,
             keyEncoding == null
                 ? new(key)
                 : new(key,
                     keyEncoding),
-            new(value, serializerOptions),
+            new(value, serializerContext),
             buffer ?? newBuffer!,
             cancellationToken,
             headers,
@@ -319,7 +319,7 @@ public static class JsonValueExtensions
         string topic,
         string? key,
         T value,
-        JsonSerializerOptions? serializerOptions = null,
+        JsonSerializerContext serializerContext,
         IBuffer<byte>? buffer = null,
         Headers? headers = null,
         Timestamp timestamp = default,
@@ -331,13 +331,13 @@ public static class JsonValueExtensions
             ? new ArrayPoolBufferWriter<byte>()
             : null;
 
-        producer.Produce<StringValue, JsonValue<T>>(
+        producer.Produce<StringValue, JsonContextValue<T>>(
             topic,
             keyEncoding == null
                 ? new(key)
                 : new(key,
                     keyEncoding),
-            new(value, serializerOptions),
+            new(value, serializerContext),
             buffer ?? newBuffer!,
             headers,
             timestamp,
@@ -349,18 +349,18 @@ public static class JsonValueExtensions
         this MessageBatch batch,
         string? key,
         T value,
-        JsonSerializerOptions? serializerOptions = null,
+        JsonSerializerContext serializerContext,
         IBuffer<byte>? buffer = null,
         Headers? headers = null,
         Timestamp timestamp = default,
         Partition? partition = null,
         Encoding? keyEncoding = default)
-        => batch.Produce<StringValue, JsonValue<T>>(
+        => batch.Produce<StringValue, JsonContextValue<T>>(
             keyEncoding == null
                 ? new(key)
                 : new(key,
                     keyEncoding),
-            new(value, serializerOptions),
+            new(value, serializerContext),
             buffer ?? batch.GetBuffer(),
             headers,
             timestamp,
@@ -373,7 +373,7 @@ public static class JsonValueExtensions
         string topic,
         Guid key,
         T value,
-        JsonSerializerOptions? serializerOptions = null,
+        JsonSerializerContext serializerContext,
         IBuffer<byte>? buffer = null,
         CancellationToken cancellationToken = default,
         Headers? headers = null,
@@ -384,10 +384,10 @@ public static class JsonValueExtensions
             ? new ArrayPoolBufferWriter<byte>()
             : null;
 
-        return producer.ProduceAsync<GuidValue, JsonValue<T>>(
+        return producer.ProduceAsync<GuidValue, JsonContextValue<T>>(
             topic,
             key,
-            new(value, serializerOptions),
+            new(value, serializerContext),
             buffer ?? newBuffer!,
             cancellationToken,
             headers,
@@ -402,7 +402,7 @@ public static class JsonValueExtensions
         string topic,
         Guid key,
         T value,
-        JsonSerializerOptions? serializerOptions = null,
+        JsonSerializerContext serializerContext,
         IBuffer<byte>? buffer = null,
         Headers? headers = null,
         Timestamp timestamp = default,
@@ -413,10 +413,10 @@ public static class JsonValueExtensions
             ? new ArrayPoolBufferWriter<byte>()
             : null;
 
-        producer.Produce<GuidValue, JsonValue<T>>(
+        producer.Produce<GuidValue, JsonContextValue<T>>(
             topic,
             key,
-            new(value, serializerOptions),
+            new(value, serializerContext),
             buffer ?? newBuffer!,
             headers,
             timestamp,
@@ -429,14 +429,14 @@ public static class JsonValueExtensions
         this MessageBatch batch,
         Guid key,
         T value,
-        JsonSerializerOptions? serializerOptions = null,
+        JsonSerializerContext serializerContext,
         IBuffer<byte>? buffer = null,
         Headers? headers = null,
         Timestamp timestamp = default,
         Partition? partition = null)
-        => batch.Produce<GuidValue, JsonValue<T>>(
+        => batch.Produce<GuidValue, JsonContextValue<T>>(
             key,
-            new(value, serializerOptions),
+            new(value, serializerContext),
             buffer ?? batch.GetBuffer(),
             headers,
             timestamp,

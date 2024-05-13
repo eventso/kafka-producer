@@ -134,7 +134,6 @@ public class Producing
     {
         var records = Enumerable.Repeat(orderProto, MessageCount);
         var batch = binaryProducer.CreateBatch(Topic);
-        var buffer = batch.GetBuffer();
 
         foreach (var record in records)
             batch.Produce<LongValue, ProtoSpanValue>(123456L, new(record));
@@ -162,7 +161,21 @@ public class Producing
         var buffer = batch.GetBuffer();
         foreach (var record in records)
         {
-            batch.ProduceJson(123456L, record, buffer);
+            batch.ProduceJson(123456L, record, buffer: buffer);
+        }
+
+        await batch.Complete();
+    }
+
+    [Benchmark]
+    public async Task Binary_JsonSourceGen_Buffer_MessageBatch()
+    {
+        var records = Enumerable.Repeat(order, MessageCount);
+        var batch = binaryProducer.CreateBatch(Topic);
+        var buffer = batch.GetBuffer();
+        foreach (var record in records)
+        {
+            batch.ProduceJson(123456L, record, SourceGenerationContext.Default, buffer: buffer);
         }
 
         await batch.Complete();

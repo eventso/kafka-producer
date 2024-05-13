@@ -1,28 +1,29 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-	  <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-	  <PackageReadmeFile>README.md</PackageReadmeFile>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<Description>Kafka producer with low memory allocation and effective batching api.</Description>
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <None Remove="Eventso.KafkaProducer.csproj.DotSettings" />
+		<None Remove="Eventso.KafkaProducer.csproj.DotSettings" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<InternalsAssemblyName Include="Confluent.Kafka" />
 	</ItemGroup>
-	
+
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.HighPerformance" />
 		<PackageReference Include="Confluent.Kafka" />
 		<PackageReference Include="IgnoresAccessChecksToGenerator">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 
-		<None Include="..\..\README.md" Pack="true" PackagePath="\"/>
+		<None Include="..\..\README.md" Pack="true" PackagePath="\" />
 	</ItemGroup>
 
 </Project>

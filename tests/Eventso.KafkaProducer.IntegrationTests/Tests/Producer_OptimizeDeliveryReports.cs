@@ -27,7 +27,7 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
     public partial class Tests
     {
         [Theory, MemberData(nameof(KafkaParameters))]
-        public async void Producer_OptimizeDeliveryReports(string bootstrapServers)
+        public async Task Producer_OptimizeDeliveryReports(string bootstrapServers)
         {
             byte[] TestKey = new byte[] { 1, 2, 3, 4 };
             byte[] TestValue = new byte[] { 5, 6, 7, 8 };
