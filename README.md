@@ -1,4 +1,4 @@
-# Binary low-allocating kafka producer for .net #
+# Binary low-allocating Kafka producer for .net #
 
 [![NuGet](https://img.shields.io/nuget/v/Eventso.KafkaProducer.svg)](https://www.nuget.org/packages/Eventso.KafkaProducer/)
 
