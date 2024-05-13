@@ -91,26 +91,26 @@ Additional packages contain method overloads that accepts Google.Protobuf.IMessa
 [Benchmark source code](https://github.com/eventso/kafka-producer/blob/main/benchmarks/Eventso.KafkaProducer.Benchmark/Producing.cs)
 
 
-| Method                           | MessageCount | Mean       | Gen0      | Gen1      | Gen2      | Allocated   |
-|--------------------------------- |------------- |-----------:|----------:|----------:|----------:|------------:|
-| Binary_Proto_Buffer_MessageBatch | 5000         |  29.038 ms |  218.7500 |         - |         - |  1406.83 KB |
-| Binary_Proto_WhenAll             | 5000         |  33.454 ms |  400.0000 |  200.0000 |         - |  2481.26 KB |
-| Confluent_Proto_WhenAll          | 5000         |  37.963 ms | 1000.0000 |  666.6667 |         - |  6652.58 KB |
-| Binary_Proto_Buffer_MessageBatch | 10000        |  52.968 ms |  400.0000 |         - |         - |   2813.2 KB |
-| Binary_SpanJson_MessageBatch     | 5000         |  57.299 ms |         - |         - |         - |  1407.25 KB |
-| Binary_Json_Buffer_MessageBatch  | 5000         |  59.708 ms |  500.0000 |         - |         - |  3516.85 KB |
-| Binary_Proto_WhenAll             | 10000        |  61.909 ms |  666.6667 |  444.4444 |  222.2222 |  4870.61 KB |
-| Confluent_Proto_WhenAll          | 10000        |  75.649 ms | 2000.0000 | 1000.0000 |  666.6667 | 13304.45 KB |
-| Confluent_Json_WhenAll           | 5000         |  82.425 ms | 1000.0000 |         - |         - |  9583.16 KB |
-| Binary_SpanJson_MessageBatch     | 10000        | 107.249 ms |         - |         - |         - |  2814.13 KB |
-| Binary_Json_Buffer_MessageBatch  | 10000        | 113.456 ms | 1000.0000 |         - |         - |  7033.18 KB |
-| Confluent_Json_WhenAll           | 10000        | 145.569 ms | 3000.0000 | 1000.0000 |         - | 19164.77 KB |
-| Binary_Proto_Buffer_MessageBatch | 30000        | 147.694 ms | 1000.0000 |         - |         - |  8438.85 KB |
-| Binary_Proto_WhenAll             | 30000        | 173.801 ms | 2000.0000 | 1000.0000 |         - | 14752.95 KB |
-| Confluent_Proto_WhenAll          | 30000        | 219.556 ms | 6000.0000 | 2000.0000 | 1000.0000 |  39656.1 KB |
-| Binary_Json_Buffer_MessageBatch  | 30000        | 335.746 ms | 3000.0000 |         - |         - | 21096.23 KB |
-| Binary_SpanJson_MessageBatch     | 30000        | 339.693 ms | 1000.0000 |         - |         - |   8438.8 KB |
-| Confluent_Json_WhenAll           | 30000        | 433.557 ms | 9500.0000 | 3000.0000 | 1500.0000 | 57237.13 KB |
+| Method                           | Messages | Mean       | Gen0      | Gen1      | Gen2      | Allocated   |
+|--------------------------------- |----------|-----------:|----------:|----------:|----------:|------------:|
+| Binary_Proto_Buffer_MessageBatch | 5000     |  29.038 ms |  218.7500 |         - |         - |  1406.83 KB |
+| Binary_Proto_WhenAll             | 5000     |  33.454 ms |  400.0000 |  200.0000 |         - |  2481.26 KB |
+| Confluent_Proto_WhenAll          | 5000     |  37.963 ms | 1000.0000 |  666.6667 |         - |  6652.58 KB |
+| Binary_Proto_Buffer_MessageBatch | 10000    |  52.968 ms |  400.0000 |         - |         - |   2813.2 KB |
+| Binary_SpanJson_MessageBatch     | 5000     |  57.299 ms |         - |         - |         - |  1407.25 KB |
+| Binary_Json_Buffer_MessageBatch  | 5000     |  59.708 ms |  500.0000 |         - |         - |  3516.85 KB |
+| Binary_Proto_WhenAll             | 10000    |  61.909 ms |  666.6667 |  444.4444 |  222.2222 |  4870.61 KB |
+| Confluent_Proto_WhenAll          | 10000    |  75.649 ms | 2000.0000 | 1000.0000 |  666.6667 | 13304.45 KB |
+| Confluent_Json_WhenAll           | 5000     |  82.425 ms | 1000.0000 |         - |         - |  9583.16 KB |
+| Binary_SpanJson_MessageBatch     | 10000    | 107.249 ms |         - |         - |         - |  2814.13 KB |
+| Binary_Json_Buffer_MessageBatch  | 10000    | 113.456 ms | 1000.0000 |         - |         - |  7033.18 KB |
+| Confluent_Json_WhenAll           | 10000    | 145.569 ms | 3000.0000 | 1000.0000 |         - | 19164.77 KB |
+| Binary_Proto_Buffer_MessageBatch | 30000    | 147.694 ms | 1000.0000 |         - |         - |  8438.85 KB |
+| Binary_Proto_WhenAll             | 30000    | 173.801 ms | 2000.0000 | 1000.0000 |         - | 14752.95 KB |
+| Confluent_Proto_WhenAll          | 30000    | 219.556 ms | 6000.0000 | 2000.0000 | 1000.0000 |  39656.1 KB |
+| Binary_Json_Buffer_MessageBatch  | 30000    | 335.746 ms | 3000.0000 |         - |         - | 21096.23 KB |
+| Binary_SpanJson_MessageBatch     | 30000    | 339.693 ms | 1000.0000 |         - |         - |   8438.8 KB |
+| Confluent_Json_WhenAll           | 30000    | 433.557 ms | 9500.0000 | 3000.0000 | 1500.0000 | 57237.13 KB |
 
 
 
