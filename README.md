@@ -93,12 +93,6 @@ Additional packages contain method overloads that accepts Google.Protobuf.IMessa
 
 | Method                           | MessageCount | Mean       | Gen0      | Gen1      | Gen2      | Allocated   |
 |--------------------------------- |------------- |-----------:|----------:|----------:|----------:|------------:|
-| Binary_Proto_Buffer_MessageBatch | 1000         |   9.353 ms |   31.2500 |         - |         - |   281.76 KB |
-| Binary_Proto_WhenAll             | 1000         |  11.274 ms |   62.5000 |         - |         - |   493.02 KB |
-| Confluent_Proto_WhenAll          | 1000         |  12.996 ms |  187.5000 |   93.7500 |         - |  1321.33 KB |
-| Binary_SpanJson_MessageBatch     | 1000         |  15.136 ms |   31.2500 |         - |         - |   281.66 KB |
-| Binary_Json_Buffer_MessageBatch  | 1000         |  17.775 ms |   93.7500 |         - |         - |   703.67 KB |
-| Confluent_Json_WhenAll           | 1000         |  20.693 ms |  281.2500 |  156.2500 |         - |  1907.29 KB |
 | Binary_Proto_Buffer_MessageBatch | 5000         |  29.038 ms |  218.7500 |         - |         - |  1406.83 KB |
 | Binary_Proto_WhenAll             | 5000         |  33.454 ms |  400.0000 |  200.0000 |         - |  2481.26 KB |
 | Confluent_Proto_WhenAll          | 5000         |  37.963 ms | 1000.0000 |  666.6667 |         - |  6652.58 KB |
