@@ -1,4 +1,4 @@
-# Binary low-allocating Kafka producer for .net #
+# Binary low-allocating Kafka producer for .Net #
 
 [![NuGet](https://img.shields.io/nuget/v/Eventso.KafkaProducer.svg)](https://www.nuget.org/packages/Eventso.KafkaProducer/)
 
@@ -79,7 +79,7 @@ await batch.Complete(token);
 ```
 
 ## Protobuf and Json values
-Additional packages contain method oversloads that accepts Google.Protobuf.IMessage or typed object as message value. They use stack or ArrayPool for non-allocating serialization.
+Additional packages contain method overloads that accepts Google.Protobuf.IMessage or typed object as message value. They use stack or ArrayPool for non-allocating serialization.
 
 * [Protobuf](https://www.nuget.org/packages/Eventso.KafkaProducer.Protobuf/) 
 * [System.Text.Json](https://www.nuget.org/packages/Eventso.KafkaProducer.Json/) (methods also accepts optional `JsonSerializerOptions` or `JsonSerializerContext`)
