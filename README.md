@@ -41,7 +41,7 @@ IProducer binaryProducer = confluentProducer.CreateBinary();
 ```
 
 ## How to use the producer:
-Two basic methods in IProducer 
+There are two basic methods in IProducer interface 
 ```csharp
 Task<DeliveryResult> ProduceAsync(
     string topic,
@@ -65,7 +65,7 @@ void Produce(
 Library contains extension methods for frequently used key types: short, int, long, string, Guid
 
 ## MessageBatch
-MessageBatch creates only one TaskCompletionSource and Task per batch while original producer api creates TaskCompletionSource per messages. Batch Produce supports all producer features.
+MessageBatch creates only one TaskCompletionSource and Task per batch while original producer api creates TaskCompletionSource per message. Batch Produce supports all producer features.
 ```csharp
 var batch = producer.CreateBatch(topicName);
 
