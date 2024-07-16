@@ -42,5 +42,17 @@ namespace Eventso.KafkaProducer.IntegrationTests
             return new TestProducerAdapter<TKey, TValue>(builder.Build(), KeySerializer, ValueSerializer,
                 AsyncKeySerializer, AsyncValueSerializer);
         }
+
+        private void CompiledOverload()
+        {
+            ProducerBuilder<byte[], byte[]> builder = default!;
+
+            var binary = builder.BuildBinary();
+
+            ProducerBuilder<short, byte> builder2 = default!;
+
+            var binary2 = builder2.BuildBinary();
+
+        }
     }
 }
