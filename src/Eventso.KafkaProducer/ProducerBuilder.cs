@@ -14,14 +14,7 @@ public sealed class ProducerBuilder
     /// </summary>
     public ProducerBuilder(IEnumerable<KeyValuePair<string, string>> config)
     {
-        var disabledReports = config.Any(p =>
-            p.Key == ConfigPropertyNames.Producer.EnableDeliveryReports
-            && p.Value != null
-            && bool.Parse(p.Value) == false);
-
-        if (disabledReports)
-            throw new NotSupportedException(
-                "Disabled delivery reports is not supported. Config property: EnableDeliveryReports must be true");
+        ValidateDeliveryReports(config);
 
         inner = new(config);
     }
@@ -33,6 +26,25 @@ public sealed class ProducerBuilder
                 "Disabled delivery reports is not supported. Config property: EnableDeliveryReports must be true");
        
         inner = new(config);
+    }
+
+    public ProducerBuilder(ProducerBuilder<byte[], byte[]> inner)
+    {
+        ValidateDeliveryReports(inner.Config);
+
+        this.inner = inner;
+    }
+
+    private void ValidateDeliveryReports(IEnumerable<KeyValuePair<string, string>> config)
+    {
+        var disabledReports = config.Any(p =>
+            p.Key == ConfigPropertyNames.Producer.EnableDeliveryReports
+            && p.Value != null
+            && bool.Parse(p.Value) == false);
+
+        if (disabledReports)
+            throw new NotSupportedException(
+                "Disabled delivery reports is not supported. Config property: EnableDeliveryReports must be true");
     }
 
     /// <summary>
