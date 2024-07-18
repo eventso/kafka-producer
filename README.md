@@ -12,6 +12,7 @@ Binary Kafka producer with a unified api that accepts `ReadOnlySpan<byte>` inste
 * Ready to use overloads for common key types: short, int, long, string, Guid
 * Support for Protobuf, System.Text.Json, SpanJson serialization (separate packages)
 * Confluent.Kafka compatibility
+* Tested in heavy-load production environment
 
 ## Registration
 There are 3 ways to create binary producer:
