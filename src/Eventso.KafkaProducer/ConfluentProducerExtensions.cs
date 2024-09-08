@@ -43,7 +43,7 @@ public static class ConfluentProducerExtensions
         }
         catch (KafkaException ex)
         {
-            handler.Dispose();
+            handler.Release();
 
             throw new ProduceException(
                 ex.Error,
@@ -51,7 +51,7 @@ public static class ConfluentProducerExtensions
         }
         catch
         {
-            handler.Dispose();
+            handler.Release();
             throw;
         }
     }

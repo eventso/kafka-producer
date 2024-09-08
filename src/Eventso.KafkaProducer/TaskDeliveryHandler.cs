@@ -2,7 +2,7 @@ using Confluent.Kafka;
 
 namespace Eventso.KafkaProducer;
 
-internal sealed class TaskDeliveryHandler : TaskCompletionSource<DeliveryResult>, IDeliveryHandler, IDisposable
+internal sealed class TaskDeliveryHandler : TaskCompletionSource<DeliveryResult>, IDeliveryHandler
 {
     private readonly string topic;
     private readonly CancellationTokenRegistration cancellationTokenRegistration;
@@ -35,6 +35,6 @@ internal sealed class TaskDeliveryHandler : TaskCompletionSource<DeliveryResult>
             TrySetResult(new DeliveryResult(deliveryReport, topic));
     }
 
-    public void Dispose()
+    public void Release()
         => cancellationTokenRegistration.Dispose();
 }
