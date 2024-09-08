@@ -22,14 +22,13 @@ public static class ConfluentProducerExtensions
         Timestamp timestamp = default,
         Partition? partition = null)
     {
-
         if (cancellationToken.IsCancellationRequested)
             return Task.FromCanceled<DeliveryResult>(cancellationToken);
 
+        var handler = new TaskDeliveryHandler(topic, cancellationToken);
+
         try
         {
-            var handler = new TaskDeliveryHandler(topic, cancellationToken);
-            
             BinaryProducer.Produce(
                 producer.Handle.LibrdkafkaHandle,
                 topic,
@@ -44,9 +43,16 @@ public static class ConfluentProducerExtensions
         }
         catch (KafkaException ex)
         {
+            handler.Release();
+
             throw new ProduceException(
                 ex.Error,
                 new(topic, partition ?? Partition.Any, Offset.Unset));
+        }
+        catch
+        {
+            handler.Release();
+            throw;
         }
     }
 

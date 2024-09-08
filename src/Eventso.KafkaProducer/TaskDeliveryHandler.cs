@@ -34,4 +34,7 @@ internal sealed class TaskDeliveryHandler : TaskCompletionSource<DeliveryResult>
         else
             TrySetResult(new DeliveryResult(deliveryReport, topic));
     }
+
+    public void Release()
+        => cancellationTokenRegistration.Dispose();
 }
