@@ -17,24 +17,19 @@
 using System.Reflection;
 using Confluent.Kafka;
 using Confluent.Kafka.Admin;
-using Newtonsoft.Json.Linq;
 using Xunit;
 
 namespace Eventso.KafkaProducer.IntegrationTests.Tests
 {
     public class GlobalFixture : IDisposable
     {
-        public string bootstrapServers;
+        public const string bootstrap= "127.0.0.1:9092";
 
+        public  string bootstrapServers = bootstrap;
         public const int partitionedTopicNumPartitions = 2;
 
         public GlobalFixture()
         {
-            var assemblyPath = typeof(Tests).GetTypeInfo().Assembly.Location;
-            var assemblyDirectory = Path.GetDirectoryName(assemblyPath);
-            var jsonPath = Path.Combine(assemblyDirectory!, "testconf.json");
-            var json = JObject.Parse(File.ReadAllText(jsonPath));
-            bootstrapServers = json["bootstrapServers"]!.ToString();
 
             SinglePartitionTopic = "dotnet_test_" + Guid.NewGuid().ToString();
             PartitionedTopic = "dotnet_test_" + Guid.NewGuid().ToString();
@@ -90,13 +85,9 @@ namespace Eventso.KafkaProducer.IntegrationTests.Tests
         {
             if (kafkaParameters == null)
             {
-                var assemblyPath = typeof(Tests).GetTypeInfo().Assembly.Location;
-                var assemblyDirectory = Path.GetDirectoryName(assemblyPath);
-                var jsonPath = Path.Combine(assemblyDirectory!, "testconf.json");
-                var json = JObject.Parse(File.ReadAllText(jsonPath));
                 kafkaParameters = new List<object[]>
                 {
-                    new object[] { json["bootstrapServers"]!.ToString() }
+                    new object[] { GlobalFixture.bootstrap }
                 };
             }
 
